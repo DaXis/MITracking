@@ -1,0 +1,8 @@
+<resources>
+    <string name="app_name">MITracking</string>
+    <string name="load_text">Cargando...</string>
+    <string name="user">Usuario</string>
+    <string name="pass">Contraseña</string>
+    <string name="login_btn">Acceder</string>
+    <string name="forgot">Restablecer contraseña</string>
+</resources>

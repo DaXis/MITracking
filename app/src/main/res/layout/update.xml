@@ -1,0 +1,48 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:orientation="vertical"
+    android:layout_width="wrap_content"
+    android:layout_height="wrap_content"
+    android:background="@color/text_icons">
+
+    <com.mitracking.custom.CustomTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Realizando la carga de evidencia"
+        android:id="@+id/donwloadTitle"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:textColor="@color/primary_color"/>
+
+    <ProgressBar
+        style="?android:attr/progressBarStyleHorizontal"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:id="@+id/progressDownload"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="10dp"
+        android:progressTint="@color/primary_color"/>
+
+    <com.mitracking.custom.CustomTextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceSmall"
+        android:text=""
+        android:id="@+id/download_subText"
+        android:layout_gravity="center_horizontal"
+        android:layout_margin="10dp"
+        android:gravity="center"
+        android:textColor="@color/primary_color"/>
+
+    <com.mitracking.custom.CustomButton
+        android:id="@+id/reintent"
+        android:layout_width="95dp"
+        android:layout_height="wrap_content"
+        android:text="Reintentar"
+        android:layout_gravity="bottom|right"
+        android:textColor="@color/primary_color"
+        android:background="@color/text_icons"
+        android:visibility="gone"/>
+
+</LinearLayout>

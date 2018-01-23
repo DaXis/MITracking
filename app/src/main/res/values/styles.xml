@@ -1,0 +1,120 @@
+<resources>
+
+    <style name="AppTheme" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorPrimary">@color/primary_color</item>
+        <item name="colorPrimaryDark">@color/dark_primary_color</item>
+        <item name="colorAccent">@color/accent_color</item>
+        <item name="colorControlNormal">@color/secondary_text</item>
+        <item name="android:textColorHint">@color/text_app</item>
+        <item name="android:dialogTheme">@style/customDialog</item>
+        <item name="android:editTextPreferenceStyle">@style/customEditText</item>
+        <item name="android:editTextStyle">@style/customEditText</item>
+    </style>
+
+    <!--<style name="AppTheme" parent="Theme.AppCompat.Light.NoActionBar">
+        <item name="colorPrimary">@color/primary_color</item>
+        <item name="colorPrimaryDark">@color/dark_primary_color</item>
+        <item name="colorAccent">@color/accent_color</item>
+    </style>-->
+
+    <style name="customDialog" parent="android:style/Theme.Dialog">
+        <item name="android:windowNoTitle">true</item>
+        <item name="android:fitsSystemWindows">false</item>
+        <item name="android:windowAnimationStyle">@android:style/Animation.Dialog</item>
+        <item name="android:windowFrame">@null</item>
+        <item name="android:windowContentOverlay">@null</item>
+        <item name="android:windowTitleStyle">@null</item>
+        <item name="android:backgroundDimEnabled">false</item>
+    </style>
+
+    <style name="MyActionBar" parent="@style/Theme.AppCompat">
+        <item name="background">@color/transparent</item>
+    </style>
+
+    <style name="customWidget" parent="@android:style/Theme.Holo">
+        <item name="colorControlNormal">@color/gris_app</item>
+        <item name="colorControlActivated">@color/accent_color</item>
+        <item name="colorControlHighlight">@color/accent_color</item>
+    </style>
+
+    <style name="customSwitch" parent="Theme.AppCompat.Light.DarkActionBar">
+        <item name="colorControlNormal">@color/gris_app</item>
+        <item name="colorControlActivated">@color/verde_limon</item>
+        <item name="colorControlHighlight">@color/verde_limon</item>
+    </style>
+
+    <style name="customEditText">
+        <item name="android:focusable">true</item>
+        <item name="android:focusableInTouchMode">true</item>
+        <item name="android:clickable">true</item>
+        <item name="android:background">?attr/editTextBackground</item>
+        <item name="android:textColor">@color/secondary_text</item>
+        <item name="android:textColorHint">@color/text_app</item>
+        <item name="android:gravity">center_vertical</item>
+    </style>
+
+    <style name="Divider_horizontal">
+        <item name="android:layout_width">match_parent</item>
+        <item name="android:layout_height">0.5dp</item>
+        <item name="android:background">@color/divider_color</item>
+    </style>
+
+    <style name="Divider_vertical">
+        <item name="android:layout_width">0.5dp</item>
+        <item name="android:layout_height">match_parent</item>
+        <item name="android:background">@color/divider_color</item>
+    </style>
+
+    <!-- PopDownMenu -->
+    <style name="Animations.PopDownMenu" />
+
+    <style name="Animations.PopDownMenu.Left">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_topleft_to_bottomright</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_bottomright_to_topleft</item>
+    </style>
+
+    <style name="Animations.PopDownMenu.Right">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_topright_to_bottomleft</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_bottomleft_to_topright</item>
+    </style>
+
+    <style name="Animations.PopDownMenu.Center">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_top</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_bottom</item>
+    </style>
+
+    <!-- PopUpMenu -->
+    <style name="Animations" />
+    <style name="Animations.PopUpMenu" />
+
+    <style name="Animations.PopUpMenu.Left">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_bottomleft_to_topright</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_topright_to_bottomleft</item>
+    </style>
+
+    <style name="Animations.PopUpMenu.Right">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_bottomright_to_topleft</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_topleft_to_bottomright</item>
+    </style>
+
+    <style name="Animations.PopUpMenu.Center">
+        <item name="@android:windowEnterAnimation">@anim/grow_from_bottom</item>
+        <item name="@android:windowExitAnimation">@anim/shrink_from_top</item>
+    </style>
+    <!-- -->
+
+    <style name="MyEditTextTheme" parent="TextAppearance.AppCompat">
+        <item name="android:textColorHint">@color/divider_color</item>
+        <item name="colorControlNormal">@color/secondary_text</item>
+        <item name="colorControlActivated">@color/primary_color</item>
+        <item name="colorControlHighlight">@color/color_success</item>
+        <item name="android:textSize">19sp</item>
+    </style>
+
+    <style name="MyCheckBox" parent="Theme.AppCompat.NoActionBar">
+        <item name="colorControlNormal">@color/secondary_text</item>   <!-- normal border color change as you wish -->
+        <item name="colorControlActivated">@color/accent_color</item> <!-- activated color change as you wish -->
+        <item name="android:textColor">@color/secondary_text</item> <!-- checkbox text color -->
+    </style>
+
+</resources>

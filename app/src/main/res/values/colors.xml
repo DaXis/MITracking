@@ -1,0 +1,91 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+
+    <!--<color name="primary_color">#18562e</color>
+    <color name="dark_primary_color">#16691a</color>
+    <color name="light_primary_color">#C8E6C9</color>-->
+    <color name="primary_color">#0098d8</color>
+    <color name="dark_primary_color">#0092cc</color>
+    <color name="light_primary_color">#AFAFAF</color>
+    <color name="text_icons">#FFFFFF</color>
+
+    <color name="dark_bg">#B91944</color>
+
+    <color name="primary_color_trans">#9FD21E4B</color>
+    <color name="dark_primary_color_trans">#9FB81540</color>
+
+    <!--<color name="accent_color">#FF5252</color>-->
+    <color name="accent_color">#FFA233</color>
+    <!--<color name="accent_color">#84d656</color>-->
+    <color name="primary_text">#333333</color>
+    <color name="secondary_text">#999999</color>
+    <color name="divider_color">#B6B6B6</color>
+
+    <color name="color_accent">#7c4dff</color>
+    <color name="color_success">#3CCD88</color>
+    <color name="color_error">#E90F0F</color>
+
+    <color name="transparent">@android:color/transparent</color>
+    <color name="TransparentGrey">#7F000000</color>
+
+    <color name="back_color">#c6dcc9</color>
+    <color name="unselect">#c1e8af</color>
+    <color name="pager_back">#4e7a54</color>
+
+    <color name="yellow">#FFFF00</color>
+
+    <color name="active">#30ae5c</color>
+    <color name="inactive">#f13d30</color>
+
+    <color name="table_data">#3A7ADC</color>
+    <color name="whatsapp_table">#6ECF19</color>
+
+    <color name="verde_limon">#7ED321</color>
+    <color name="azul_cielo">#4A90E2</color>
+    <color name="gris_app">#607D8B</color>
+    <color name="text_app">#AFAFAF</color>
+
+    <color name="bg_dark">#2e2e2e</color>
+
+    <color name="btn_gb">#f4f4f4</color>
+
+    <color name="cuarenta_y_aja">#429321</color>
+    <color name="subs_select">#88b6cd</color>
+
+    <color name="blue_txt">#0074a5</color>
+    <color name="little_gray">#ededed</color>
+
+    <color name="transparentGreen">#7F03AD9B</color>
+
+    <color name="transparentRed">#7FF28426</color>
+
+    <color name="verde_reloj">#3a7b9b</color>
+    <color name="naranja">#F28426</color>
+    <color name="ganando">#4a90e2</color>
+
+    <color name="blue_clear">#4A90E2</color>
+    <color name="pink">#F5237D</color>
+    <color name="blue_dark">#236BF5</color>
+    <color name="purple">#BD10E0</color>
+    <color name="orange">#FF5615</color>
+    <color name="white">#FFF</color>
+    <color name="button">#8003AD9B</color>
+
+    <color name="secondary_text_hint">#949494</color>
+
+    <color name="rojo_error">#d81c1c</color>
+    <color name="listo_azul">#3984e1</color>
+    <color name="verde">#329c1d</color>
+    <color name="gris">#b7b7b7</color>
+    <color name="amarillo">#fbc02d</color>
+    <color name="morado">#8b11fc</color>
+
+    <color name="texto3">#AAAAAA</color>
+    <color name="texto_azul">#1694DF</color>
+    <color name="fondos">#F9F9F9</color>
+
+    <color name="aviso">#25a2c2</color>
+    <color name="noticia">#7d1fc4</color>
+    <color name="comunicado">#f0b326</color>
+
+</resources>
