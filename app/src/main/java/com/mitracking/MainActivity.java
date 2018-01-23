@@ -32,6 +32,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     private MainFragment mainFragment;
     private LoginObj loginObj;
     private final String TAG = getClass().getSimpleName();
+    //cambio
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
