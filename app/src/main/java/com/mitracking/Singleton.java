@@ -18,9 +18,11 @@ import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
 import android.view.inputmethod.InputMethodManager;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ProgressBar;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -58,7 +60,8 @@ public class Singleton extends Application implements GpsConfiguration.OnGpsLoca
     private static AppCompatActivity activity;
     private static FragmentManager fragmentManager;
     private static Fragment currentFragment;
-    private static LinearLayout toolbar;
+    private static RelativeLayout toolbar;
+    private static Button btn;
 
     //----------------------
     private static final int CORE_POOL_SIZE = 5;
@@ -425,11 +428,11 @@ public class Singleton extends Application implements GpsConfiguration.OnGpsLoca
         return currentFragment;
     }
 
-    public static void setToolbar(LinearLayout arg){
+    public static void setToolbar(RelativeLayout arg){
         toolbar = arg;
     }
 
-    public static LinearLayout getToolbar(){
+    public static RelativeLayout getToolbar(){
         return toolbar;
     }
 
@@ -518,6 +521,14 @@ public class Singleton extends Application implements GpsConfiguration.OnGpsLoca
 
     public static UpdateDialog getUpdateDialog(){
         return updateDialog;
+    }
+
+    public static void setBtn(Button arg){
+        btn = arg;
+    }
+
+    public static Button getBtn(){
+        return btn;
     }
 
 }

@@ -1,5 +1,8 @@
 package com.mitracking;
 
+import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.AppCompatActivity;
 import android.os.Bundle;
@@ -7,14 +10,17 @@ import android.util.Base64;
 import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
+import android.widget.Button;
 import android.widget.FrameLayout;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 
 import com.mitracking.fragments.LoginFragment;
 import com.mitracking.fragments.MainFragment;
 import com.mitracking.objs.LoginObj;
+import com.mitracking.service.SendService;
 import com.mitracking.utils.ConnectToServer;
 import com.mitracking.utils.Connectivity;
 import com.mitracking.utils.Constants;
@@ -60,7 +66,7 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
     }
 
     private void setToolbar() {
-        ImageView action_img = (ImageView)findViewById(R.id.back_btn);
+        /*ImageView action_img = (ImageView)findViewById(R.id.back_btn);
         Singleton.setActionImg(action_img);
         action_img.setOnClickListener(this);
 
@@ -78,12 +84,23 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
         ImageView menu = (ImageView)findViewById(R.id.menu_btn);
         Singleton.setMenuImg(menu);
-        menu.setOnClickListener(this);
+        menu.setOnClickListener(this);*/
+
+        Button btn = (Button)findViewById(R.id.btn);
+        Singleton.setBtn(btn);
+        btn.setOnClickListener(this);
 
         TextView action_txt = (TextView)findViewById(R.id.action_txt);
         Singleton.setActionTxt(action_txt);
+        PackageInfo pInfo = null;
+        try {
+            pInfo = getPackageManager().getPackageInfo(getPackageName(), 0);
+            action_txt.setText("MI "+pInfo.versionName);
+        } catch (PackageManager.NameNotFoundException e) {
+            e.printStackTrace();
+        }
 
-        LinearLayout toolbar = (LinearLayout)findViewById(R.id.toolbar);
+        RelativeLayout toolbar = (RelativeLayout)findViewById(R.id.toolbar);
         Singleton.setToolbar(toolbar);
     }
 
@@ -182,6 +199,12 @@ public class MainActivity extends AppCompatActivity implements View.OnClickListe
 
     @Override
     public void onClick(View v) {
-
+        switch(v.getId()){
+            case R.id.btn:
+                Intent intent = new Intent(this, SendService.class);
+                startService(intent);
+                Singleton.getCurrentActivity().finish();
+                break;
+        }
     }
 }

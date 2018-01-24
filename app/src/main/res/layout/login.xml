@@ -2,7 +2,18 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:orientation="vertical"
     android:layout_width="match_parent"
-    android:layout_height="match_parent">
+    android:layout_height="match_parent"
+    android:background="@color/text_icons">
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="150dp"
+        android:src="@drawable/imagen_ipad"/>
+
+    <ImageView
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:src="@drawable/l_loging"/>
 
     <ScrollView
         android:layout_width="match_parent"
@@ -22,12 +33,12 @@
                 android:layout_marginTop="20dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:background="@drawable/gray_rect"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:background="@drawable/wth_rounded"
                 android:hint="@string/user"
                 android:textColor="@color/primary_text"
-                android:textColorHint="@color/secondary_text"
+                android:textColorHint="@color/primary_color"
                 android:inputType="textEmailAddress"/>
 
             <com.mitracking.custom.OtherCustomEditText
@@ -39,11 +50,11 @@
                 android:layout_marginTop="20dp"
                 android:paddingTop="10dp"
                 android:paddingBottom="10dp"
-                android:paddingLeft="5dp"
-                android:paddingRight="5dp"
-                android:background="@drawable/gray_rect"
+                android:paddingLeft="10dp"
+                android:paddingRight="10dp"
+                android:background="@drawable/wth_rounded"
                 android:textColor="@color/primary_text"
-                android:textColorHint="@color/secondary_text"
+                android:textColorHint="@color/primary_color"
                 android:hint="@string/pass"
                 android:inputType="textPassword"/>
 
@@ -55,8 +66,10 @@
                 android:layout_marginLeft="25dp"
                 android:layout_marginTop="20dp"
                 android:text="@string/login_btn"
-                android:textColor="@color/text_icons"
-                android:background="@drawable/btn_round"/>
+                android:textColor="@color/primary_color"
+                android:background="@drawable/gray_btn_round"
+                android:textAllCaps="false"
+                android:textStyle="bold"/>
 
             <com.mitracking.custom.CustomTextView
                 android:id="@+id/forgot"
@@ -64,12 +77,12 @@
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
                 android:gravity="center"
-                android:layout_marginTop="20dp"
+                android:layout_marginTop="45dp"
                 android:layout_marginBottom="20dp"
                 android:textAppearance="?android:attr/textAppearanceSmall"
-                android:textColor="@color/primary_text"
+                android:textColor="@color/primary_color"
                 android:text="@string/forgot"
-                android:visibility="invisible"/>
+                android:visibility="visible"/>
 
         </LinearLayout>
 
