@@ -12,6 +12,7 @@ import android.support.v7.app.AppCompatActivity;
 import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.WindowManager;
+import android.provider.Settings.Secure;
 
 import com.mitracking.utils.Constants;
 
@@ -30,8 +31,8 @@ public class SplashActivity extends AppCompatActivity {
         setContentView(R.layout.splash);
         Singleton.setCurrentActivity(this);
 
-        TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
-        Singleton.savePreferences(Constants.MobileID_TAG, telephonyManager.getDeviceId());
+        String android_id = Secure.getString(getContentResolver(), Secure.ANDROID_ID);
+        Singleton.savePreferences(Constants.MobileID_TAG, android_id);
 
         Singleton.setFragmentManager(getSupportFragmentManager());
         checkLocationPermission();
@@ -45,9 +46,10 @@ public class SplashActivity extends AppCompatActivity {
                         != PackageManager.PERMISSION_GRANTED) {
             ActivityCompat.requestPermissions(this, new String[]{android.Manifest.permission.ACCESS_FINE_LOCATION},
                     MY_PERMISSION_ACCESS_FINE_LOCATION);
+            Singleton.savePreferences(Constants.GPS_TAG, false);
             return;
         } else {
-            Singleton.getGpsConfig().configuracionLocationManager();
+            Singleton.savePreferences(Constants.GPS_TAG, true);
             onUIThread();
         }
     }
@@ -57,11 +59,10 @@ public class SplashActivity extends AppCompatActivity {
         switch (requestCode) {
             case MY_PERMISSION_ACCESS_FINE_LOCATION:
                 if(grantResults.length > 0 && grantResults[0] == PackageManager.PERMISSION_GRANTED){
-                    Singleton.getEditor().putBoolean("gps", true);
-                    Singleton.getEditor().commit();
+                    Singleton.savePreferences(Constants.GPS_TAG, true);
                     onUIThread();
                 } else {
-                    Singleton.getEditor().putBoolean("gps", false);
+                    Singleton.savePreferences(Constants.GPS_TAG, false);
                     Singleton.getEditor().commit();
                 }
                 break;

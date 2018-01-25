@@ -185,7 +185,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 configObj11.value = Constants.URL_ValidateUser;
                 array.add(configObj11);
 
-                if(Singleton.getSettings().getString(Constants.ShowAdvanceConfig_TAG, "").equals("TRUE")){
+                if(Constants.ShowAdvanceConfig.equals("TRUE")){
                     adapter = new ConfigAdapter(this, array);
                     config.setAdapter(adapter);
                 }

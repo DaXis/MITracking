@@ -52,7 +52,7 @@ import java.util.concurrent.ThreadPoolExecutor;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicInteger;
 
-public class Singleton extends Application implements GpsConfiguration.OnGpsLocationListener {
+public class Singleton extends Application {
 
     private static final boolean isQA = true;
     private static Singleton m_Instance;
@@ -102,7 +102,6 @@ public class Singleton extends Application implements GpsConfiguration.OnGpsLoca
     private static ImageView action_img, profile, info, menu_btn, addBtn;
     private static LoginObj loginObj;
     private static GpsConfiguration gps;
-    private static double latitude, longitude;
     private static SQLiteDatabase db;
     private static DBHelper dbh;
     private static UpdateDialog updateDialog;
@@ -136,7 +135,7 @@ public class Singleton extends Application implements GpsConfiguration.OnGpsLoca
         genCacheDataCarpet();
         initPreferences();
         initImageLoader(this);
-        initGPSConfig(this);
+        //initGPSConfig(this);
         /*if(!settings.getBoolean("moda", false)){
             dbh.initModalidad();
             savePreferences("moda", true);
@@ -377,22 +376,22 @@ public class Singleton extends Application implements GpsConfiguration.OnGpsLoca
 
     public static void savePreferences(String tag, String arg){
         editor.putString(tag, arg);
-        editor.commit();
+        editor.apply();
     }
 
     public static void savePreferences(String tag, int arg){
         editor.putInt(tag, arg);
-        editor.commit();
+        editor.apply();
     }
 
     public static void savePreferences(String tag, boolean arg){
         editor.putBoolean(tag, arg);
-        editor.commit();
+        editor.apply();
     }
 
     public static void savePreferences(String tag, long arg){
         editor.putLong(tag, arg);
-        editor.commit();
+        editor.apply();
     }
 
     public static boolean isConnected(Context context){
@@ -493,7 +492,7 @@ public class Singleton extends Application implements GpsConfiguration.OnGpsLoca
         return loginObj;
     }
 
-    private static void initGPSConfig(Context context){
+    public static void initGPSConfig(Context context){
         gps = new GpsConfiguration(context, false);
     }
 
@@ -501,19 +500,6 @@ public class Singleton extends Application implements GpsConfiguration.OnGpsLoca
         return gps;
     }
 
-    @Override
-    public void onGpsLocationInteraction(Location location) {
-        latitude = location.getLatitude();
-        longitude = location.getLongitude();
-    }
-
-    public static double getLatitude(){
-        return latitude;
-    }
-
-    public static double getLongitude(){
-        return longitude;
-    }
 
     public static void setUpdateDialog(UpdateDialog arg){
         updateDialog = arg;

@@ -8,13 +8,17 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import 	java.util.Calendar;
+
+import android.location.Location;
 import android.os.IBinder;
 import android.util.Log;
 import com.mitracking.Singleton;
 import com.mitracking.objs.LoginObj;
 import com.mitracking.objs.TrackObj;
 import com.mitracking.utils.ConnectToServer;
+import com.mitracking.utils.Connectivity;
 import com.mitracking.utils.Constants;
+import com.mitracking.utils.GpsConfiguration;
 import com.nostra13.universalimageloader.utils.L;
 
 import org.json.JSONArray;
@@ -22,14 +26,17 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
+import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.concurrent.TimeUnit;
 
-public class SendService extends Service {
+public class SendService extends Service implements GpsConfiguration.OnGpsLocationListener {
 
     private Timer timer;
     private static long TIME;
+    private double latitud, longitud;
+    private float accuracy;
 
     @Override
     public void onCreate() {
@@ -37,6 +44,7 @@ public class SendService extends Service {
         Singleton.getInstance();
         int secons = Integer.parseInt(Constants.TrackModeValue);
         TIME = TimeUnit.SECONDS.toMillis(60);
+        initGPS();
     }
 
     @Override
@@ -67,8 +75,8 @@ public class SendService extends Service {
     private void trackingFunction(){
         if(dayValidation()){
             if(hourValidation()){
-                //Singleton.getBdh().insertNewTrack();
-                initConnection();
+                initInsert();
+                //initConnection();
             }
         }
     }
@@ -145,6 +153,39 @@ public class SendService extends Service {
         return false;
     }
 
+    private void initInsert(){
+        long day = System.currentTimeMillis();
+        String MobileTrackDate = dateFormat(day);
+        String UTCTrackDate = dateFormatUniversal(day);
+        Singleton.getBdh().insertNewTrack(MobileTrackDate, UTCTrackDate, ""+latitud, ""+longitud, ""+accuracy, day);
+        if(latitud == 0 && longitud == 0 && accuracy == 0){
+            Singleton.getBdh().updateTrack("FAIL", getErrorCode(0), 0, day);
+        } else {
+            Singleton.getBdh().updateTrack("DONE", getErrorCode(4), 0, day);
+        }
+    }
+
+    private String getErrorCode(int arg){
+        String GpsErrorCode = "";
+        if(arg == 0){
+            if(Connectivity.isConnected(this))
+                GpsErrorCode = "003";
+            else if(Singleton.getSettings().getBoolean(Constants.GPS_TAG, false))
+                GpsErrorCode = "002";
+            else if(!Singleton.getGpsConfig().configuracionLocationManager())
+                GpsErrorCode = "001";
+            else
+                GpsErrorCode = "";
+        } else if(arg == 1)
+            GpsErrorCode = "201";
+        else if(arg == 2)
+            GpsErrorCode = "400";
+        else if(arg == 3)
+            GpsErrorCode = "500";
+
+        return GpsErrorCode;
+    }
+
     private void initConnection(){
         parseLogin(Singleton.getSettings().getString(Constants.JSON_LOGIN, ""));
         JSONObject TrackUserInfo = new JSONObject();
@@ -213,5 +254,31 @@ public class SendService extends Service {
         }
     }
 
+    @Override
+    public void onGpsLocationInteraction(Location location) {
+        latitud = location.getLatitude();
+        longitud = location.getLongitude();
+        accuracy = location.getAccuracy();
+    }
+
+    public void initGPS(){
+        Singleton.initGPSConfig(this);
+    }
+
+    private String dateFormat(long time) {
+        String date = "";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd kkmmss");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("America/Mexico_City"));
+        date = simpleDateFormat.format(new Date(time));;
+        return date;
+    }
+
+    private String dateFormatUniversal(long time) {
+        String date = "";
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd kkmmss");
+        simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
+        date = simpleDateFormat.format(new Date(time));;
+        return date;
+    }
 }
 

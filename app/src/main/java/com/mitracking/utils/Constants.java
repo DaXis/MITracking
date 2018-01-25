@@ -16,7 +16,7 @@ public class Constants {
     public static final String URL_GetConfiguration_TAG = "URL_GetConfiguration";
     public static final String URL_TrackMobilePosition_TAG = "URL_TrackMobilePosition";
     public static final String MobileID_TAG = "MobileID";
-
+    public static final String GPS_TAG = "gps_flag";
 
     public static String SAASName = Singleton.getSettings().getString(SAASName_TAG, "SAAS1");
     public static String TenantID = Singleton.getSettings().getString(TenantID_TAG, "500084");
@@ -37,22 +37,31 @@ public class Constants {
     //Constantes de configuracion
     public static final String IsValidConfiguration_TAG = "IsValidConfiguration";
     public static String IsValidConfiguration = Singleton.getSettings().getString(IsValidConfiguration_TAG, "");
+
     public static final String RefreshConfig_TAG = "RefreshConfig";
     public static String RefreshConfig = Singleton.getSettings().getString(RefreshConfig_TAG, "");
+
     public static final String ShowAdvanceConfig_TAG = "ShowAdvanceConfig";
     public static String ShowAdvanceConfig = Singleton.getSettings().getString(ShowAdvanceConfig_TAG, "");
+
     public static final String TrackDaysHistory_TAG = "TrackDaysHistory";
     public static String TrackDaysHistory = Singleton.getSettings().getString(TrackDaysHistory_TAG, "");
+
     public static final String TrackMode_TAG = "TrackMode";
     public static String TrackMode = Singleton.getSettings().getString(TrackMode_TAG, "");
+
     public static final String TrackModeValue_TAG = "TrackModeValue";
     public static String TrackModeValue = Singleton.getSettings().getString(TrackModeValue_TAG, "");
+
     public static final String TrackWeekEndDays_TAG = "TrackWeekEndDays";
     public static String TrackWeekEndDays = Singleton.getSettings().getString(TrackWeekEndDays_TAG, "");
+
     public static final String TrackWeekEndHours_TAG = "TrackWeekEndHours";
     public static String TrackWeekEndHours = Singleton.getSettings().getString(TrackWeekEndHours_TAG, "");
+
     public static final String TrackWorkDays_TAG = "TrackWorkDays";
     public static String TrackWorkDays = Singleton.getSettings().getString(TrackWorkDays_TAG, "");
+
     public static final String TrackWorkHours_TAG = "TrackWorkHours";
     public static String TrackWorkHours = Singleton.getSettings().getString(TrackWorkHours_TAG, "");
 

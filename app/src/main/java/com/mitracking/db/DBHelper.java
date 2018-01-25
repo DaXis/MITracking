@@ -18,7 +18,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     final String sqlCreate0 = "CREATE TABLE GeoItems (ID INTEGER PRIMARY KEY AUTOINCREMENT, MobileTrackDate TEXT, UTCTrackDate TEXT, " +
             "Latitude TEXT, Longitude TEXT, GpsAccuracy TEXT, GpsTrackStatus TEXT, GpsErrorCode TEXT, TrackGeoItemSend INTEGER, " +
-            "TrackGeoItemDate LONG))";
+            "TrackGeoItemDate LONG)";
 
 
     public DBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -50,7 +50,23 @@ public class DBHelper extends SQLiteOpenHelper {
                 "GpsTrackStatus = '"+GpsTrackStatus+"', "+
                 "GpsErrorCode = '"+GpsErrorCode+"' ,"+
                 "TrackGeoItemSend = "+TrackGeoItemSend+
-                "WHERE ID ="+ID;
+                "WHERE ID = "+ID;
+        Singleton.getDb().execSQL(query);
+    }
+
+    public void updateTrack(String GpsTrackStatus, String GpsErrorCode, int TrackGeoItemSend, long TrackGeoItemDate){
+        String query = "UPDATE GeoItems SET " +
+                "GpsTrackStatus = '"+GpsTrackStatus+"', "+
+                "GpsErrorCode = '"+GpsErrorCode+"' ,"+
+                "TrackGeoItemSend = "+TrackGeoItemSend+" "+
+                "WHERE TrackGeoItemDate = "+TrackGeoItemDate;
+        Singleton.getDb().execSQL(query);
+    }
+
+    public void updateGpsErrorCode(String GpsErrorCode, int ID){
+        String query = "UPDATE GeoItems SET " +
+                "GpsErrorCode = '"+GpsErrorCode+"' ,"+
+                "WHERE ID = "+ID;
         Singleton.getDb().execSQL(query);
     }
 

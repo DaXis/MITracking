@@ -33,24 +33,9 @@ public class GpsConfiguration {
         mListener = (OnGpsLocationListener)context;
     }
 
-    public void  configuracionLocationManager(){
+    public boolean  configuracionLocationManager(){
         if (!locationManager.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            // mostrarAvisoGpsDeshabilitado();
-            /*AlertDialog alerta = new AlertDialog.Builder(context).create();
-            alerta.setTitle("Alerta");
-            alerta.setMessage("Es necesario encender el GPS");
-            // Boton que nos permite acceder a las preferecias de
-            // geolocaalizacion y habilitarlo
-            alerta.setButton(-1, "Aceptar",
-                    new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            Intent i = new Intent(
-                                    android.provider.Settings.ACTION_LOCATION_SOURCE_SETTINGS);
-                            context.startActivity(i);
-                        }
-                    });
-            alerta.show();*/
+            return false;
         }else{
             LocationProvider gpsProvider = locationManager.getProvider(LocationManager.GPS_PROVIDER);
             LocationProvider networkProvider = locationManager.getProvider(LocationManager.NETWORK_PROVIDER);
@@ -84,7 +69,7 @@ public class GpsConfiguration {
                 //locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0,
                 //      0, locListener);
             }
-
+            return true;
         }
     }
 
