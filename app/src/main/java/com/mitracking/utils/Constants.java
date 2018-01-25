@@ -15,6 +15,8 @@ public class Constants {
     public static final String URL_ValidateUser_TAG = "URL_ValidateUser";
     public static final String URL_GetConfiguration_TAG = "URL_GetConfiguration";
     public static final String URL_TrackMobilePosition_TAG = "URL_TrackMobilePosition";
+    public static final String MobileID_TAG = "MobileID";
+
 
     public static String SAASName = Singleton.getSettings().getString(SAASName_TAG, "SAAS1");
     public static String TenantID = Singleton.getSettings().getString(TenantID_TAG, "500084");

@@ -1,6 +1,7 @@
 package com.mitracking;
 
 import android.annotation.TargetApi;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.os.Build;
@@ -8,8 +9,11 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.ActivityCompat;
 import android.support.v7.app.AppCompatActivity;
+import android.telephony.TelephonyManager;
 import android.util.Log;
 import android.view.WindowManager;
+
+import com.mitracking.utils.Constants;
 
 public class SplashActivity extends AppCompatActivity {
 
@@ -25,6 +29,10 @@ public class SplashActivity extends AppCompatActivity {
         Log.d(TAG, "onCreate()");
         setContentView(R.layout.splash);
         Singleton.setCurrentActivity(this);
+
+        TelephonyManager telephonyManager = (TelephonyManager)getSystemService(Context.TELEPHONY_SERVICE);
+        Singleton.savePreferences(Constants.MobileID_TAG, telephonyManager.getDeviceId());
+
         Singleton.setFragmentManager(getSupportFragmentManager());
         checkLocationPermission();
     }
