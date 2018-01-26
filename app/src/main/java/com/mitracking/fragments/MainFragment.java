@@ -1,6 +1,7 @@
 package com.mitracking.fragments;
 
 import android.os.Bundle;
+import android.os.Handler;
 import android.support.v4.app.Fragment;
 import android.util.Log;
 import android.view.LayoutInflater;
@@ -129,68 +130,77 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                 Singleton.savePreferences(Constants.URL_ValidateUser_TAG,
                         GetConfigurationResult.getString("URL_ValidateUser"));
 
-                user.setText(Singleton.getLoginObj().EmployeeName);
+                Singleton.getCurrentActivity().runOnUiThread(new Runnable() {
+                    @Override
+                    public void run() {
+                        new Handler().postDelayed(new Runnable(){
+                            public void run(){
+                                user.setText(Singleton.getLoginObj().EmployeeName);
 
-                ArrayList<ConfigObj> array = new ArrayList<>();
-                ConfigObj configObj = new ConfigObj();
-                configObj.tag = Constants.EmailSupport_TAG;
-                configObj.value = Constants.EmailSupport;
-                array.add(configObj);
-                ConfigObj configObj0 = new ConfigObj();
-                configObj0.tag = Constants.SAASName_TAG;
-                configObj0.value = Constants.SAASName;
-                array.add(configObj0);
-                ConfigObj configObj1 = new ConfigObj();
-                configObj1.tag = Constants.TenantID_TAG;
-                configObj1.value = Constants.TenantID;
-                array.add(configObj1);
-                ConfigObj configObj2 = new ConfigObj();
-                configObj2.tag = Constants.TrackDaysHistory_TAG;
-                configObj2.value = Constants.TrackDaysHistory;
-                array.add(configObj2);
-                ConfigObj configObj3 = new ConfigObj();
-                configObj3.tag = Constants.TrackMode_TAG;
-                configObj3.value = Constants.TrackMode;
-                array.add(configObj3);
-                ConfigObj configObj4 = new ConfigObj();
-                configObj4.tag = Constants.TrackModeValue_TAG;
-                configObj4.value = Constants.TrackModeValue;
-                array.add(configObj4);
-                ConfigObj configObj5 = new ConfigObj();
-                configObj5.tag = Constants.TrackWeekEndDays_TAG;
-                configObj5.value = Constants.TrackWeekEndDays;
-                array.add(configObj5);
-                ConfigObj configObj6 = new ConfigObj();
-                configObj6.tag = Constants.TrackWeekEndHours_TAG;
-                configObj6.value = Constants.TrackWeekEndHours;
-                array.add(configObj6);
-                ConfigObj configObj7 = new ConfigObj();
-                configObj7.tag = Constants.TrackWorkDays_TAG;
-                configObj7.value = Constants.TrackWorkDays;
-                array.add(configObj7);
-                ConfigObj configObj8 = new ConfigObj();
-                configObj8.tag = Constants.TrackWorkHours_TAG;
-                configObj8.value = Constants.TrackWorkHours;
-                array.add(configObj8);
-                ConfigObj configObj9 = new ConfigObj();
-                configObj9.tag = Constants.URL_GetConfiguration_TAG;
-                configObj9.value = Constants.URL_GetConfiguration;
-                array.add(configObj9);
-                ConfigObj configObj10 = new ConfigObj();
-                configObj10.tag = Constants.URL_TrackMobilePosition_TAG;
-                configObj10.value = Constants.URL_TrackMobilePosition;
-                array.add(configObj10);
-                ConfigObj configObj11 = new ConfigObj();
-                configObj11.tag = Constants.URL_ValidateUser_TAG;
-                configObj11.value = Constants.URL_ValidateUser;
-                array.add(configObj11);
+                                ArrayList<ConfigObj> array = new ArrayList<>();
+                                ConfigObj configObj = new ConfigObj();
+                                configObj.tag = Constants.EmailSupport_TAG;
+                                configObj.value = Singleton.getSettings().getString(Constants.EmailSupport_TAG, "");
+                                array.add(configObj);
+                                ConfigObj configObj0 = new ConfigObj();
+                                configObj0.tag = Constants.SAASName_TAG;
+                                configObj0.value = Singleton.getSettings().getString(Constants.SAASName_TAG, "");
+                                array.add(configObj0);
+                                ConfigObj configObj1 = new ConfigObj();
+                                configObj1.tag = Constants.TenantID_TAG;
+                                configObj1.value = Singleton.getSettings().getString(Constants.TenantID_TAG, "");
+                                array.add(configObj1);
+                                ConfigObj configObj2 = new ConfigObj();
+                                configObj2.tag = Constants.TrackDaysHistory_TAG;
+                                configObj2.value = Singleton.getSettings().getString(Constants.TrackDaysHistory_TAG, "");
+                                array.add(configObj2);
+                                ConfigObj configObj3 = new ConfigObj();
+                                configObj3.tag = Constants.TrackMode_TAG;
+                                configObj3.value = Singleton.getSettings().getString(Constants.TrackMode_TAG, "");
+                                array.add(configObj3);
+                                ConfigObj configObj4 = new ConfigObj();
+                                configObj4.tag = Constants.TrackModeValue_TAG;
+                                configObj4.value = Singleton.getSettings().getString(Constants.TrackModeValue_TAG, "");
+                                array.add(configObj4);
+                                ConfigObj configObj5 = new ConfigObj();
+                                configObj5.tag = Constants.TrackWeekEndDays_TAG;
+                                configObj5.value = Singleton.getSettings().getString(Constants.TrackWeekEndDays_TAG, "");
+                                array.add(configObj5);
+                                ConfigObj configObj6 = new ConfigObj();
+                                configObj6.tag = Constants.TrackWeekEndHours_TAG;
+                                configObj6.value = Singleton.getSettings().getString(Constants.TrackWeekEndHours_TAG, "");
+                                array.add(configObj6);
+                                ConfigObj configObj7 = new ConfigObj();
+                                configObj7.tag = Constants.TrackWorkDays_TAG;
+                                configObj7.value = Singleton.getSettings().getString(Constants.TrackWorkDays_TAG, "");
+                                array.add(configObj7);
+                                ConfigObj configObj8 = new ConfigObj();
+                                configObj8.tag = Constants.TrackWorkHours_TAG;
+                                configObj8.value = Singleton.getSettings().getString(Constants.TrackWorkHours_TAG, "");
+                                array.add(configObj8);
+                                ConfigObj configObj9 = new ConfigObj();
+                                configObj9.tag = Constants.URL_GetConfiguration_TAG;
+                                configObj9.value = Singleton.getSettings().getString(Constants.URL_GetConfiguration_TAG, "");
+                                array.add(configObj9);
+                                ConfigObj configObj10 = new ConfigObj();
+                                configObj10.tag = Constants.URL_TrackMobilePosition_TAG;
+                                configObj10.value = Singleton.getSettings().getString(Constants.URL_TrackMobilePosition_TAG, "");
+                                array.add(configObj10);
+                                ConfigObj configObj11 = new ConfigObj();
+                                configObj11.tag = Constants.URL_ValidateUser_TAG;
+                                configObj11.value = Singleton.getSettings().getString(Constants.URL_ValidateUser_TAG, "");
+                                array.add(configObj11);
 
-                if(Constants.ShowAdvanceConfig.equals("TRUE")){
-                    adapter = new ConfigAdapter(this, array);
-                    config.setAdapter(adapter);
-                }
+                                if(Singleton.getSettings().getString(Constants.ShowAdvanceConfig_TAG, "").equals("TRUE")){
+                                    adapter = new ConfigAdapter(MainFragment.this, array);
+                                    config.setAdapter(adapter);
+                                }
 
-                Singleton.dissmissLoad();
+                                Singleton.dissmissLoad();
+                            };
+                        }, Constants.DURACION_SPLASH);
+                    }
+                });
             } else {
                 Singleton.dissmissLoad();
                 Singleton.showCustomDialog(getFragmentManager(), "¡Atención!",

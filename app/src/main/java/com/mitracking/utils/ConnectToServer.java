@@ -6,6 +6,8 @@ import com.mitracking.Singleton;
 import com.mitracking.dialogs.UpdateDialog;
 import com.mitracking.fragments.LoginFragment;
 import com.mitracking.fragments.MainFragment;
+import com.mitracking.service.AlarmReceiver;
+import com.mitracking.service.SendService;
 
 import org.apache.http.HttpVersion;
 import org.apache.http.client.ClientProtocolException;
@@ -438,6 +440,12 @@ public class ConnectToServer {
                 break;
             case 2:
                 ((MainFragment) o).getResponse(result);
+                break;
+            case 3:
+                ((SendService) o).getResponse(result);
+                break;
+            case 4:
+                ((AlarmReceiver) o).getResponse(result);
                 break;
         }
     }

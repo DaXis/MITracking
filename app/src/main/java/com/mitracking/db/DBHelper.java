@@ -5,6 +5,7 @@ import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
+import android.util.Log;
 
 import com.mitracking.Singleton;
 import com.mitracking.objs.TrackObj;
@@ -42,6 +43,7 @@ public class DBHelper extends SQLiteOpenHelper {
         String query = "INSERT INTO GeoItems (MobileTrackDate, UTCTrackDate, Latitude, Longitude, GpsAccuracy, TrackGeoItemDate) "+
                 "VALUES ('"+MobileTrackDate+"', '"+UTCTrackDate+"', '"+Latitude+"', '"+Longitude+"', '"+GpsAccuracy+"', "+
                 TrackGeoItemDate+")";
+        Log.d("insert query", query);
         Singleton.getDb().execSQL(query);
     }
 
@@ -60,6 +62,7 @@ public class DBHelper extends SQLiteOpenHelper {
                 "GpsErrorCode = '"+GpsErrorCode+"' ,"+
                 "TrackGeoItemSend = "+TrackGeoItemSend+" "+
                 "WHERE TrackGeoItemDate = "+TrackGeoItemDate;
+        Log.d("update query", query);
         Singleton.getDb().execSQL(query);
     }
 

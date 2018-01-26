@@ -17,6 +17,7 @@ public class Constants {
     public static final String URL_TrackMobilePosition_TAG = "URL_TrackMobilePosition";
     public static final String MobileID_TAG = "MobileID";
     public static final String GPS_TAG = "gps_flag";
+    public static final int DURACION_SPLASH = 3000;
 
     public static String SAASName = Singleton.getSettings().getString(SAASName_TAG, "SAAS1");
     public static String TenantID = Singleton.getSettings().getString(TenantID_TAG, "500084");
