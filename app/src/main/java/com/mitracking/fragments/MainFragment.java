@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ListView;
+import android.widget.Switch;
 import android.widget.TextView;
 
 import com.mitracking.MainActivity;
@@ -29,9 +30,10 @@ import java.util.ArrayList;
 public class MainFragment extends Fragment implements View.OnClickListener {
 
     private int lay;
-    private TextView user, email;
+    private TextView user, email, number, user_test;
     private ListView config;
     private ConfigAdapter adapter;
+    private Switch switch1, switch2;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -57,9 +59,26 @@ public class MainFragment extends Fragment implements View.OnClickListener {
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
         View rootView = inflater.inflate(R.layout.main, container, false);
 
+        switch1 = (Switch)rootView.findViewById(R.id.switch1);
+        switch1.setClickable(false);
+        switch1.setFocusable(false);
+        switch2 =  (Switch)rootView.findViewById(R.id.switch2);
+        switch2.setClickable(false);
+        switch2.setFocusable(false);
+
         user = (TextView)rootView.findViewById(R.id.user);
         email = (TextView)rootView.findViewById(R.id.email);
+        number = (TextView)rootView.findViewById(R.id.number);
+        user_test = (TextView)rootView.findViewById(R.id.user_test);
         config = (ListView)rootView.findViewById(R.id.config);
+
+        if(!Singleton.getSettings().getBoolean(Constants.GPS_TAG, false)){
+            switch1.setChecked(false);
+            switch2.setChecked(true);
+        } else {
+            switch1.setChecked(true);
+            switch2.setChecked(false);
+        }
 
         initConnection();
         return rootView;
@@ -135,7 +154,10 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                     public void run() {
                         new Handler().postDelayed(new Runnable(){
                             public void run(){
-                                user.setText(Singleton.getLoginObj().EmployeeName);
+                                user.setText(Singleton.getSettings().getString(Constants.UserLoginID_TAG, ""));
+                                email.setText(Singleton.getSettings().getString(Constants.EmailSupport_TAG, ""));
+                                number.setText(Singleton.getLoginObj().AlignmentName);
+                                user_test.setText(Singleton.getLoginObj().EmployeeName);
 
                                 ArrayList<ConfigObj> array = new ArrayList<>();
                                 ConfigObj configObj = new ConfigObj();

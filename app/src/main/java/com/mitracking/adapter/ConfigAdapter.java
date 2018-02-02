@@ -46,7 +46,7 @@ public class ConfigAdapter extends BaseAdapter {
             convertView = inflater.inflate(R.layout.cnfg_row, parent, false);
 
         TextView tag = ViewHolder.get(convertView, R.id.tag);
-        tag.setText(array.get(position).tag+" : ");
+        //tag.setText(array.get(position).tag+" : ");
 
         TextView value = ViewHolder.get(convertView, R.id.value);
         value.setText(array.get(position).value);

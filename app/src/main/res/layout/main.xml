@@ -5,7 +5,7 @@
     android:layout_height="match_parent"
     android:background="@color/text_icons">
 
-    <ImageView
+    <!--<ImageView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:layout_gravity="center"
@@ -36,7 +36,7 @@
     <FrameLayout
         android:layout_width="match_parent"
         android:layout_height="1dp"
-        android:background="@color/little_gray"/>
+        android:background="@color/little_gray"/>-->
 
     <com.mitracking.custom.CustomTextView
         android:layout_width="wrap_content"
@@ -44,14 +44,15 @@
         android:layout_gravity="center"
         android:textColor="@color/primary_text"
         android:textStyle="bold"
-        android:text="Status"
+        android:text="Estatus de permisos"
         android:layout_marginTop="20dp"
         android:textAppearance="?android:attr/textAppearanceMedium"/>
 
     <LinearLayout
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
-        android:orientation="horizontal">
+        android:orientation="horizontal"
+        android:layout_marginTop="10dp">
 
         <LinearLayout
             android:layout_width="0dp"
@@ -64,7 +65,8 @@
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:layout_gravity="center_horizontal"/>
+                android:layout_gravity="center_horizontal"
+                />
 
             <com.mitracking.custom.CustomTextView
                 android:layout_width="wrap_content"
@@ -72,7 +74,7 @@
                 android:textColor="@color/primary_text"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:text="En proceso"
+                android:text="Correctos"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:gravity="center_horizontal"
                 android:layout_gravity="center_horizontal"/>
@@ -90,7 +92,7 @@
                 android:layout_width="60dp"
                 android:layout_height="wrap_content"
                 android:gravity="center_horizontal"
-                android:layout_gravity="center_horizontal"/>
+                android:layout_gravity="center_horizontal" />
 
             <com.mitracking.custom.CustomTextView
                 android:layout_width="wrap_content"
@@ -98,7 +100,7 @@
                 android:textColor="@color/primary_text"
                 android:layout_marginTop="10dp"
                 android:layout_marginBottom="10dp"
-                android:text="Detenido"
+                android:text="Incompletos"
                 android:textAppearance="?android:attr/textAppearanceMedium"
                 android:gravity="center_horizontal"
                 android:layout_gravity="center_horizontal"/>
@@ -114,6 +116,60 @@
         android:layout_marginBottom="20dp"
         android:layout_marginTop="20dp"/>
 
+    <!-- -->
+
+    <com.mitracking.custom.CustomTextView
+        android:id="@+id/user"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/primary_text"
+        android:textStyle="bold"
+        android:text=""
+        android:layout_marginTop="20dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <com.mitracking.custom.CustomTextView
+        android:id="@+id/number"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/primary_text"
+        android:text=""
+        android:layout_marginTop="10dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <com.mitracking.custom.CustomTextView
+        android:id="@+id/user_test"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:textColor="@color/primary_text"
+        android:textStyle="bold"
+        android:text=""
+        android:layout_marginTop="10dp"
+        android:textAppearance="?android:attr/textAppearanceMedium"/>
+
+    <com.mitracking.custom.CustomTextView
+        android:id="@+id/email"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:gravity="center"
+        android:textColor="@color/primary_text"
+        android:layout_marginTop="10dp"
+        android:layout_marginBottom="10dp"
+        android:text=""/>
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="1dp"
+        android:background="@color/little_gray"
+        android:layout_marginBottom="20dp"
+        android:layout_marginTop="20dp"/>
+
+    <!-- -->
+
     <com.mitracking.custom.CustomTextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
@@ -122,11 +178,12 @@
         android:textStyle="bold"
         android:text="Configuración"
         android:textAppearance="?android:attr/textAppearanceMedium"
-        android:layout_marginBottom="20dp"/>
+        android:layout_marginBottom="20dp"
+        android:visibility="gone"/>
 
     <ListView
         android:id="@+id/config"
         android:layout_width="match_parent"
-        android:layout_height="match_parent"/>
+        android:layout_height="match_parent" />
 
 </LinearLayout>

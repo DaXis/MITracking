@@ -1,11 +1,16 @@
 package com.mitracking.fragments;
 
+import android.graphics.Point;
+import android.os.Build;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.Display;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.TextView;
@@ -27,6 +32,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
     private Button login_btn;
     private TextView forgot;
     private LoginObj loginObj;
+    private float mHeightPixels, mWidthPixels;
 
     @Override
     public void onCreate(Bundle savedInstanceState) {
@@ -53,10 +59,10 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         View rootView = inflater.inflate(R.layout.login, container, false);
 
         user = (EditText)rootView.findViewById(R.id.user);
-        user.setText("user_1_test");
+        //user.setText("user_1_test");
 
         pass = (EditText)rootView.findViewById(R.id.pass);
-        pass.setText("p4ssw0rd");
+        //pass.setText("p4ssw0rd");
 
         login_btn = (Button) rootView.findViewById(R.id.login_btn);
         login_btn.setOnClickListener(this);
@@ -106,7 +112,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             json.put("TenantID", Constants.TenantID);
             json.put("UserLoginID", user.getText().toString());
             json.put("UserPwsdID", pass.getText().toString());
-            json.put("MobileType", "0004");
+            json.put("MobileType", getDeviceId());
             TrackUserInfo.put("trackUserInfo", json);
         } catch (JSONException e) {
             e.printStackTrace();
@@ -148,6 +154,57 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             e.printStackTrace();
             Singleton.savePreferences(Constants.FLAG_LOGIN, false);
             Singleton.dissmissLoad();
+        }
+    }
+
+    private String getDeviceId(){
+        double size = getScreenSize();
+        if(size >= 7)
+            return "0003";
+        else
+            return "0004";
+    }
+
+    private double getScreenSize(){
+        setRealDeviceSizeInPixels();
+        DisplayMetrics dm = new DisplayMetrics();
+        Singleton.getCurrentActivity().getWindowManager().getDefaultDisplay().getMetrics(dm);
+        double x = Math.pow(mWidthPixels/dm.xdpi,2);
+        double y = Math.pow(mHeightPixels/dm.ydpi,2);
+        double screenInches = Math.sqrt(x+y);
+        Log.d("debug","Screen inches : " + screenInches);
+        return screenInches;
+    }
+
+    private void setRealDeviceSizeInPixels() {
+        WindowManager windowManager = Singleton.getCurrentActivity().getWindowManager();
+        Display display = windowManager.getDefaultDisplay();
+        DisplayMetrics displayMetrics = new DisplayMetrics();
+        display.getMetrics(displayMetrics);
+
+
+        // since SDK_INT = 1;
+        mWidthPixels = displayMetrics.widthPixels;
+        mHeightPixels = displayMetrics.heightPixels;
+
+        // includes window decorations (statusbar bar/menu bar)
+        if (Build.VERSION.SDK_INT >= 14 && Build.VERSION.SDK_INT < 17) {
+            try {
+                mWidthPixels = (Integer) Display.class.getMethod("getRawWidth").invoke(display);
+                mHeightPixels = (Integer) Display.class.getMethod("getRawHeight").invoke(display);
+            } catch (Exception ignored) {
+            }
+        }
+
+        // includes window decorations (statusbar bar/menu bar)
+        if (Build.VERSION.SDK_INT >= 17) {
+            try {
+                Point realSize = new Point();
+                Display.class.getMethod("getRealSize", Point.class).invoke(display, realSize);
+                mWidthPixels = realSize.x;
+                mHeightPixels = realSize.y;
+            } catch (Exception ignored) {
+            }
         }
     }
 
