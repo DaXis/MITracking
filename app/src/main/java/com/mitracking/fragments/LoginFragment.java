@@ -89,13 +89,13 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     private boolean validations(){
         if(user.getText().length() > 0){
-            if(pass.getText().length() > 0){
+            //if(pass.getText().length() > 0){
                 return true;
-            } else {
+            /*} else {
                 Singleton.showCustomDialog(getFragmentManager(), "¡Atención!",
                         "No debe dejar el campo de password vacio.", "Aceptar", 0);
                 return false;
-            }
+            }*/
         } else {
             Singleton.showCustomDialog(getFragmentManager(), "¡Atención!",
                     "No debe dejar el campo de usuario vacio.", "Aceptar", 0);
@@ -111,7 +111,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
             json.put("SAASName", Constants.SAASName);
             json.put("TenantID", Constants.TenantID);
             json.put("UserLoginID", user.getText().toString());
-            json.put("UserPwsdID", pass.getText().toString());
+            json.put("UserPwsdID", "password");
             json.put("MobileType", getDeviceId());
             TrackUserInfo.put("trackUserInfo", json);
         } catch (JSONException e) {

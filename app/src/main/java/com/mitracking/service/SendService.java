@@ -1,7 +1,9 @@
 package com.mitracking.service;
 
 import android.Manifest;
+import android.app.Notification;
 import android.app.AlarmManager;
+import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.app.Service;
 import android.content.Context;
@@ -13,16 +15,16 @@ import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
 
-import android.content.pm.PackageManager;
+import android.graphics.Color;
 import android.location.Location;
-import android.location.LocationListener;
-import android.location.LocationManager;
-import android.os.Bundle;
+import android.os.Build;
 import android.os.IBinder;
-import android.os.SystemClock;
-import android.support.v4.app.ActivityCompat;
+import android.support.annotation.RequiresApi;
+import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.mitracking.MainActivity;
+import com.mitracking.R;
 import com.mitracking.Singleton;
 import com.mitracking.interfaces.LocationTracker;
 import com.mitracking.objs.LoginObj;
@@ -30,8 +32,6 @@ import com.mitracking.objs.TrackObj;
 import com.mitracking.utils.ConnectToServer;
 import com.mitracking.utils.Connectivity;
 import com.mitracking.utils.Constants;
-import com.mitracking.utils.GpsConfiguration;
-import com.nostra13.universalimageloader.utils.L;
 
 import org.json.JSONArray;
 import org.json.JSONException;
@@ -45,21 +45,18 @@ import java.util.concurrent.TimeUnit;
 
 public class SendService extends Service implements LocationTracker, LocationTracker.LocationUpdateListener  {
 
-    private Timer timer;
-    private static long TIME;
+    private static Timer timer;
+    private static long TIME, INITIAL_DELAY = 5500;
     private static double latitud, longitud;
     private static float accuracy;
     private ArrayList<TrackObj> array;
+    private ArrayList<TrackObj> array_b;
     //********************************
     private boolean isRunning;
-
     private ProviderLocationTracker gps;
     private ProviderLocationTracker net;
-
     private LocationUpdateListener listener;
-
-    Location lastLoc;
-    long lastTime;
+    private static Location lastLoc;
     //********************************
     private AlarmManager alarmMgr;
 
@@ -75,18 +72,23 @@ public class SendService extends Service implements LocationTracker, LocationTra
         gps = new ProviderLocationTracker(this, ProviderLocationTracker.ProviderType.GPS);
         net = new ProviderLocationTracker(this, ProviderLocationTracker.ProviderType.NETWORK);
         start();
+        startOnBack();
+        if(timer == null){
+            timer = new Timer();
+            timer.scheduleAtFixedRate(new TimerTask() {
+                synchronized public void run() {
+                    System.gc();
+                    trackingFunction();
+                }
+            }, INITIAL_DELAY, TIME);
+        }
     }
 
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("Service", "onStartCommand");
-        timer = new Timer();
-        timer.scheduleAtFixedRate(new TimerTask() {
-            synchronized public void run() {
-                trackingFunction();
-            }
-        }, TimeUnit.SECONDS.toMillis(11), TIME);
-        return START_STICKY;
+        //return START_STICKY;
+        return START_NOT_STICKY;
     }
 
     @Override
@@ -103,10 +105,17 @@ public class SendService extends Service implements LocationTracker, LocationTra
     }
 
     private void trackingFunction() {
-        if (dayValidation()) {
-            if (hourValidation()) {
+        boolean days = dayValidation();
+        //Log.d("dayValidation", ""+days);
+        if (days) {
+            boolean hours = hourValidation();
+            //Log.d("hourValidation", ""+hours);
+            if (hours) {
                 initInsert();
-                initConnection();
+                if(Connectivity.isConnected(this)) {
+                    initConnection();
+                    initErrorConnection();
+                }
             }
         }
     }
@@ -115,9 +124,11 @@ public class SendService extends Service implements LocationTracker, LocationTra
         String arg = Singleton.getSettings().getString(Constants.TrackWorkDays_TAG, "").replace("0", "");
         String arg0 = Singleton.getSettings().getString(Constants.TrackWeekEndDays_TAG, "").replace("0", "");
 
-
         Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_WEEK);
+        day = day-1;
+        if(day == 0)
+            day = 7;
 
         String[] daysS = arg.split("[|]");
         ArrayList<String> days = new ArrayList<>(Arrays.asList(daysS));
@@ -129,6 +140,10 @@ public class SendService extends Service implements LocationTracker, LocationTra
             }
         }
 
+        /*for(int i = 0; i < days.size(); i++){
+            Log.d("day "+i, days.get(i));
+        }*/
+
         if (days.contains("" + day))
             return true;
         else
@@ -138,7 +153,10 @@ public class SendService extends Service implements LocationTracker, LocationTra
     private boolean hourValidation() {
         Calendar calendar = Calendar.getInstance();
         int day = calendar.get(Calendar.DAY_OF_WEEK);
-        SimpleDateFormat parser = new SimpleDateFormat("HH:mm");
+        day = day-1;
+        if(day == 0)
+            day = 7;
+        SimpleDateFormat parser = new SimpleDateFormat("kk:mm");
         Date userDate = null;
         String current = "";
         try {
@@ -146,6 +164,7 @@ public class SendService extends Service implements LocationTracker, LocationTra
             if (calendar.get(Calendar.HOUR_OF_DAY) < 10)
                 hour = "0" + hour;
             current = hour + ":" + calendar.get(Calendar.MINUTE);
+            //Log.d("current", current);
             userDate = parser.parse(current);
         } catch (ParseException e) {
             return false;
@@ -187,26 +206,32 @@ public class SendService extends Service implements LocationTracker, LocationTra
         long day = System.currentTimeMillis();
         String MobileTrackDate = dateFormat(day);
         String UTCTrackDate = dateFormatUniversal(day);
-        latitud = lastLoc.getLatitude();
-        longitud = lastLoc.getLongitude();
-        accuracy = lastLoc.getAccuracy();
-        Singleton.getBdh().insertNewTrack(MobileTrackDate, UTCTrackDate, "" + latitud, "" + longitud, "" + accuracy, day);
-        if (latitud == 0 && longitud == 0 && accuracy == 0) {
-            Singleton.getBdh().updateTrack("FAIL", getErrorCode(0), 0, day);
-        } else {
-            Singleton.getBdh().updateTrack("DONE", getErrorCode(4), 0, day);
+        if(lastLoc != null){
+            latitud = round(lastLoc.getLatitude(), 6);
+            longitud = round(lastLoc.getLongitude(), 6);
+            accuracy = lastLoc.getAccuracy();
         }
+        Singleton.getBdh().insertNewTrack(MobileTrackDate, UTCTrackDate, "" + latitud, "" + longitud, "" + accuracy, day);
+        if(Connectivity.isConnected(this)){
+            if (latitud == 0 && longitud == 0 && accuracy == 0) {
+                Singleton.getBdh().updateTrack("FAIL", getErrorCode(0), 0, day);
+            } else {
+                Singleton.getBdh().updateTrack("DONE", getErrorCode(4), 0, day);
+            }
+        } else
+            Singleton.getBdh().updateTrack("FAIL", getErrorCode(0), 0, day);
+        Log.d("initInsert", "complete");
     }
 
     private String getErrorCode(int arg) {
         String GpsErrorCode = "";
         if (arg == 0) {
-            if (Connectivity.isConnected(this))
-                GpsErrorCode = "003";
+            if (!Connectivity.isConnected(this))
+                GpsErrorCode = "Sin conexión a internet";
             else if (Singleton.getSettings().getBoolean(Constants.GPS_TAG, false))
-                GpsErrorCode = "002";
+                GpsErrorCode = "GPS desactivado";
             else if (latitud == 0 && longitud == 0)
-                GpsErrorCode = "001";
+                GpsErrorCode = "Latitud y longitud = 0";
             else
                 GpsErrorCode = "";
         } else if (arg == 1)
@@ -215,6 +240,8 @@ public class SendService extends Service implements LocationTracker, LocationTra
             GpsErrorCode = "400";
         else if (arg == 3)
             GpsErrorCode = "500";
+        else if (arg == 4)
+            GpsErrorCode = "Envio exitoso desde background";
 
         return GpsErrorCode;
     }
@@ -232,13 +259,13 @@ public class SendService extends Service implements LocationTracker, LocationTra
             json.put("MobileID", Singleton.getSettings().getString(Constants.MobileID_TAG, ""));
 
             JSONArray TrackGeoItems = new JSONArray();
-            array = Singleton.getBdh().getTrackList();
+            array = Singleton.getBdh().getTrackList("DONE");
             for (int i = 0; i < array.size(); i++) {
                 JSONObject TrackGeoItem = new JSONObject();
                 TrackGeoItem.put("MobileTrackDate", array.get(i).MobileTrackDate);
                 TrackGeoItem.put("UTCTrackDate", array.get(i).UTCTrackDate);
-                TrackGeoItem.put("GpsLatitude", array.get(i).Latitude);
-                TrackGeoItem.put("GpsLongitude", array.get(i).Longitude);
+                TrackGeoItem.put("Latitude", array.get(i).Latitude);
+                TrackGeoItem.put("Longitude", array.get(i).Longitude);
                 TrackGeoItem.put("GpsAccuracy", array.get(i).GpsAccuracy);
                 TrackGeoItem.put("GpsTrackStatus", array.get(i).GpsTrackStatus);
                 TrackGeoItem.put("GpsErrorCode", array.get(i).GpsErrorCode);
@@ -300,7 +327,7 @@ public class SendService extends Service implements LocationTracker, LocationTra
 
     private String dateFormat(long time) {
         String date = "";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd kkmmss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd kk:mm:ss");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("America/Mexico_City"));
         date = simpleDateFormat.format(new Date(time));
         ;
@@ -309,7 +336,7 @@ public class SendService extends Service implements LocationTracker, LocationTra
 
     private String dateFormatUniversal(long time) {
         String date = "";
-        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd kkmmss");
+        SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd kk:mm:ss");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         date = simpleDateFormat.format(new Date(time));
         ;
@@ -367,8 +394,7 @@ public class SendService extends Service implements LocationTracker, LocationTra
     }
 
     public void onUpdate(Location oldLoc, long oldTime, Location newLoc, long newTime) {
-        Log.d("onUpdate", "onUpdate");
-        boolean update = false;
+        /*boolean update = false;
 
         if(lastLoc == null){
             update = true;
@@ -389,23 +415,27 @@ public class SendService extends Service implements LocationTracker, LocationTra
             }
             lastLoc = newLoc;
             lastTime = newTime;
-        }
+        }*/
+        lastLoc = newLoc;
+        Log.d("lat lon", lastLoc.getLatitude()+", "+lastLoc.getLongitude());
     }
 
     public void getResponse(String result) {
+        Log.d("gps response", result);
         try {
             JSONObject json = new JSONObject(result);
             JSONObject TrackMobilePositionResult = json.getJSONObject("TrackMobilePositionResult");
             if(TrackMobilePositionResult.getString("ServerStatus").equals("DONE") &&
                     TrackMobilePositionResult.getString("ServerErrorCode").equals("0000")){
                 for(int i = 0; i < array.size(); i++){
-                    Singleton.getBdh().updateTrack("DONE", getErrorCode(4), 0, array.get(i).ID);
+                    //Singleton.getBdh().updateTrack("DONE", getErrorCode(4), 1, array.get(i).ID);
+                    Singleton.getBdh().updateTrack(1, array.get(i).ID);
                 }
-                array.clear();
             }
         } catch (JSONException e) {
             e.printStackTrace();
         }
+        array.clear();
     }
 
     private void refreshConfig(){
@@ -427,6 +457,75 @@ public class SendService extends Service implements LocationTracker, LocationTra
             alarmMgr.setRepeating(AlarmManager.RTC_WAKEUP, calendar.getTimeInMillis(), 0, alarmIntent);
         }
     }
+
+    private static double round(double value, int places) {
+        if (places < 0) throw new IllegalArgumentException();
+
+        long factor = (long) Math.pow(10, places);
+        value = value * factor;
+        long tmp = Math.round(value);
+        return (double) tmp / factor;
+    }
+
+    private void startOnBack(){
+        //Notification notification = new Notification(R.drawable.tab_tracking, getText(R.string.service), System.currentTimeMillis());
+        Notification notification = new NotificationCompat.Builder(this)
+                .setContentTitle("Location Updates Service")
+                .setContentText("Getting Location Updates")
+                .setSmallIcon(R.drawable.tab_tracking)
+                .setTicker(getText(R.string.service))
+                .build();
+        Intent notificationIntent = new Intent(this, MainActivity.class);
+        PendingIntent pendingIntent = PendingIntent.getActivity(this, 0, notificationIntent, 0);
+        startForeground(1, notification);
+    }
+
+    //*********************************
+    private void initErrorConnection() {
+        parseLogin(Singleton.getSettings().getString(Constants.JSON_LOGIN, ""));
+        JSONObject TrackUserInfo = new JSONObject();
+        JSONObject json = new JSONObject();
+        try {
+            json.put("SAASName", Constants.SAASName);
+            json.put("TenantID", Constants.TenantID);
+
+            JSONArray TrackGeoItems = new JSONArray();
+            array_b = Singleton.getBdh().getTrackList("FAIL");
+            for (int i = 0; i < array_b.size(); i++) {
+                JSONObject TrackGeoItem = new JSONObject();
+                TrackGeoItem.put("UserLoginID", Singleton.getSettings().getString(Constants.UserLoginID_TAG, ""));
+                TrackGeoItem.put("ErrorDateTime", array_b.get(i).MobileTrackDate);
+                TrackGeoItem.put("ErrorEvent", array_b.get(i).GpsTrackStatus);
+                TrackGeoItem.put("ErrorDetail", array_b.get(i).GpsErrorCode);
+                TrackGeoItems.put(TrackGeoItem);
+            }
+
+            json.put("TrackErrorItem", TrackGeoItems);
+            TrackUserInfo.put("TrackErrorInfo", json);
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        Object[] objs = new Object[]{Constants.URL_ErrorTrack, 5, this, TrackUserInfo};
+        ConnectToServer connectToServer = new ConnectToServer(objs);
+    }
+
+    public void getErrorResponse(String result) {
+        Log.d("gps error response", result);
+        try {
+            JSONObject json = new JSONObject(result);
+            JSONObject TrackMobilePositionResult = json.getJSONObject("SendErrorLogResult");
+            if(TrackMobilePositionResult.getString("ServerStatus").equals("DONE") &&
+                    TrackMobilePositionResult.getString("ServerErrorCode").equals("0000")){
+                for(int i = 0; i < array_b.size(); i++){
+                    Singleton.getBdh().updateTrack(1, array_b.get(i).ID);
+                }
+            }
+        } catch (JSONException e) {
+            e.printStackTrace();
+        }
+        array.clear();
+    }
+    //*********************************
 
 }
 

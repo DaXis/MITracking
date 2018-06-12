@@ -5,4 +5,7 @@
     <string name="pass">Contraseña</string>
     <string name="login_btn">Acceder</string>
     <string name="forgot">Restablecer contraseña</string>
+    <string name="service">Corriendo proceso de GPS</string>
+    <string name="notification_title">MITracking</string>
+    <string name="notification_message">Proceso de MITracking</string>
 </resources>

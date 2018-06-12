@@ -2,6 +2,8 @@ package com.mitracking.utils;
 
 import android.os.AsyncTask;
 import android.util.Log;
+
+import com.mitracking.MainActivity;
 import com.mitracking.Singleton;
 import com.mitracking.dialogs.UpdateDialog;
 import com.mitracking.fragments.LoginFragment;
@@ -446,6 +448,12 @@ public class ConnectToServer {
                 break;
             case 4:
                 ((AlarmReceiver) o).getResponse(result);
+                break;
+            case 5:
+                if(o.getClass() == SendService.class)
+                    ((SendService) o).getErrorResponse(result);
+                else if(o.getClass() == MainActivity.class)
+                    ((MainActivity) o).getTrackResponse(result);
                 break;
         }
     }

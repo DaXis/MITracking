@@ -15,6 +15,7 @@ public class Constants {
     public static final String URL_ValidateUser_TAG = "URL_ValidateUser";
     public static final String URL_GetConfiguration_TAG = "URL_GetConfiguration";
     public static final String URL_TrackMobilePosition_TAG = "URL_TrackMobilePosition";
+    public static final String URL_ErrorTrack_TAG = "URL_SendErrorLog";
     public static final String MobileID_TAG = "MobileID";
     public static final String GPS_TAG = "gps_flag";
     public static final int DURACION_SPLASH = 3000;
@@ -30,6 +31,8 @@ public class Constants {
             "https://la-mi-salesdemo.cegedim.com/MITrackingWS/MITrackingWS.svc/GetConfiguration");
     public static String URL_TrackMobilePosition = Singleton.getSettings().getString(URL_TrackMobilePosition_TAG,
             "https://la-mi-salesdemo.cegedim.com/MITrackingWS/MITrackingWS.svc/TrackMobilePosition");
+    public static String URL_ErrorTrack = Singleton.getSettings().getString(URL_ErrorTrack_TAG,
+            "https://la-mi-salesdemo.cegedim.com/MITrackingWS/MITrackingWS.svc/SendErrorLog");
 
     //Constantes de login
     public static final String UserLoginID_TAG = "UserLoginID";

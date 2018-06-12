@@ -35,7 +35,12 @@ public class SplashActivity extends AppCompatActivity {
         Singleton.savePreferences(Constants.MobileID_TAG, android_id);
 
         Singleton.setFragmentManager(getSupportFragmentManager());
-        checkLocationPermission();
+
+        int currentapiVersion = android.os.Build.VERSION.SDK_INT;
+        if (currentapiVersion >= Build.VERSION_CODES.M)
+            checkLocationPermission();
+        else
+            onUIThread();
     }
 
     @TargetApi(Build.VERSION_CODES.M)

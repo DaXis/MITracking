@@ -56,7 +56,8 @@
                 android:textColor="@color/primary_text"
                 android:textColorHint="@color/primary_color"
                 android:hint="@string/pass"
-                android:inputType="textPassword"/>
+                android:inputType="textPassword"
+                android:visibility="gone"/>
 
             <com.mitracking.custom.CustomButton
                 android:id="@+id/login_btn"

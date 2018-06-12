@@ -1,5 +1,8 @@
 package com.mitracking.fragments;
 
+import android.app.ActivityManager;
+import android.content.Context;
+import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
 import android.support.v4.app.Fragment;
@@ -19,6 +22,7 @@ import com.mitracking.Singleton;
 import com.mitracking.adapter.ConfigAdapter;
 import com.mitracking.objs.ConfigObj;
 import com.mitracking.objs.LoginObj;
+import com.mitracking.service.SendService;
 import com.mitracking.utils.ConnectToServer;
 import com.mitracking.utils.Constants;
 
@@ -31,8 +35,7 @@ public class MainFragment extends Fragment implements View.OnClickListener {
 
     private int lay;
     private TextView user, email, number, user_test;
-    private ListView config;
-    private ConfigAdapter adapter;
+    //private ListView config;
     private Switch switch1, switch2;
 
     @Override
@@ -70,7 +73,6 @@ public class MainFragment extends Fragment implements View.OnClickListener {
         email = (TextView)rootView.findViewById(R.id.email);
         number = (TextView)rootView.findViewById(R.id.number);
         user_test = (TextView)rootView.findViewById(R.id.user_test);
-        config = (ListView)rootView.findViewById(R.id.config);
 
         if(!Singleton.getSettings().getBoolean(Constants.GPS_TAG, false)){
             switch1.setChecked(false);
@@ -212,10 +214,13 @@ public class MainFragment extends Fragment implements View.OnClickListener {
                                 configObj11.tag = Constants.URL_ValidateUser_TAG;
                                 configObj11.value = Singleton.getSettings().getString(Constants.URL_ValidateUser_TAG, "");
                                 array.add(configObj11);
+                                ((MainActivity)Singleton.getCurrentActivity()).setArray(array);
 
-                                if(Singleton.getSettings().getString(Constants.ShowAdvanceConfig_TAG, "").equals("TRUE")){
-                                    adapter = new ConfigAdapter(MainFragment.this, array);
-                                    config.setAdapter(adapter);
+                                Log.d("isMyServiceRunning", ""+isMyServiceRunning(SendService.class));
+                                if(!isMyServiceRunning(SendService.class)){
+                                    //stopService(new Intent(ActivityName.this, ServiceClassName.class));
+                                    Intent intent = new Intent(Singleton.getCurrentActivity(), SendService.class);
+                                    Singleton.getCurrentActivity().startService(intent);
                                 }
 
                                 Singleton.dissmissLoad();
@@ -233,6 +238,16 @@ public class MainFragment extends Fragment implements View.OnClickListener {
             Singleton.savePreferences(Constants.FLAG_LOGIN, false);
             Singleton.dissmissLoad();
         }
+    }
+
+    private boolean isMyServiceRunning(Class<?> serviceClass) {
+        ActivityManager manager = (ActivityManager)Singleton.getCurrentActivity().getSystemService(Context.ACTIVITY_SERVICE);
+        for (ActivityManager.RunningServiceInfo service : manager.getRunningServices(Integer.MAX_VALUE)) {
+            if (serviceClass.getName().equals(service.service.getClassName())) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }

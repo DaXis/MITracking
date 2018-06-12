@@ -1,12 +1,11 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    xmlns:app="http://schemas.android.com/apk/res-auto"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    android:orientation="vertical">
+    android:layout_height="match_parent">
 
     <include layout="@layout/actionbar"
+        android:id="@+id/toolbar"
         android:layout_width="match_parent"
         android:layout_height="wrap_content"
         tools:layout_editor_absoluteY="0dp"
@@ -16,7 +15,59 @@
         android:id="@+id/mainContent"
         android:layout_width="match_parent"
         android:layout_height="match_parent"
-        tools:layout_editor_absoluteY="8dp"
-        tools:layout_editor_absoluteX="8dp" />
+        android:layout_below="@+id/toolbar"
+        android:layout_above="@+id/buttons"
+        tools:layout_editor_absoluteX="8dp"
+        tools:layout_editor_absoluteY="8dp" />
 
-</LinearLayout>
+    <LinearLayout
+        android:id="@+id/buttons"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentStart="true"
+        android:orientation="horizontal"
+        android:layout_alignParentLeft="true"
+        android:background="@color/little_gray_b"
+        android:padding="7dp"
+        android:visibility="gone">
+
+        <ImageButton
+            android:id="@+id/home"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:src="@drawable/tab_home"
+            android:background="@color/transparent"
+            android:layout_gravity="center"/>
+
+        <ImageButton
+            android:id="@+id/track"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:src="@drawable/tab_tracking_off"
+            android:background="@color/transparent"
+            android:layout_gravity="center"/>
+
+        <ImageButton
+            android:id="@+id/error"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:src="@drawable/tab_system_off"
+            android:background="@color/transparent"
+            android:layout_gravity="center"/>
+
+        <ImageButton
+            android:id="@+id/config"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="0.25"
+            android:src="@drawable/tab_config_off"
+            android:background="@color/transparent"
+            android:layout_gravity="center"/>
+
+    </LinearLayout>
+
+</RelativeLayout>

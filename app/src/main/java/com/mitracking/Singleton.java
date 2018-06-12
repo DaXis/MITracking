@@ -45,6 +45,7 @@ import com.nostra13.universalimageloader.utils.MemoryCacheUtils;
 
 import java.io.File;
 import java.util.ArrayList;
+import java.util.Timer;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 import java.util.concurrent.ThreadFactory;
@@ -515,6 +516,16 @@ public class Singleton extends Application {
 
     public static Button getBtn(){
         return btn;
+    }
+
+    private static Timer timer;
+    public static Timer getTimer() {
+        if(timer == null) {
+            synchronized(Singleton.class) {
+                if(timer == null) new Timer();
+            }
+        }
+        return timer;
     }
 
 }

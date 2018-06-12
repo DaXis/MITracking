@@ -5,8 +5,6 @@ import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
 import android.telephony.TelephonyManager;
 
-import com.mitracking.Singleton;
-
 /**
  * Check device's network connectivity and speed
  * @author emil http://stackoverflow.com/users/220710/emil
@@ -20,7 +18,7 @@ public class Connectivity {
      * @return
      */
     public static NetworkInfo getNetworkInfo(Context context){
-        ConnectivityManager cm = (ConnectivityManager) Singleton.getCurrentActivity().getSystemService(Context.CONNECTIVITY_SERVICE);
+        ConnectivityManager cm = (ConnectivityManager) context.getSystemService(Context.CONNECTIVITY_SERVICE);
         return cm.getActiveNetworkInfo();
     }
 
