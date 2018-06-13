@@ -3,7 +3,9 @@ package com.mitracking;
 import android.annotation.TargetApi;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.pm.PackageManager;
+import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
@@ -14,6 +16,7 @@ import android.util.Log;
 import android.view.WindowManager;
 import android.provider.Settings.Secure;
 
+import com.mitracking.objs.BatteryObj;
 import com.mitracking.utils.Constants;
 
 public class SplashActivity extends AppCompatActivity {
@@ -25,6 +28,7 @@ public class SplashActivity extends AppCompatActivity {
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         //Thread.setDefaultUncaughtExceptionHandler(new ForceCloseCatch(this));
         Log.d(TAG, "onCreate()");

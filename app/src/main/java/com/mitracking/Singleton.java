@@ -3,12 +3,15 @@ package com.mitracking;
 import android.app.Activity;
 import android.app.Application;
 import android.content.Context;
+import android.content.Intent;
+import android.content.IntentFilter;
 import android.content.SharedPreferences;
 import android.database.sqlite.SQLiteDatabase;
 import android.graphics.Bitmap;
 import android.location.Location;
 import android.net.ConnectivityManager;
 import android.net.NetworkInfo;
+import android.os.BatteryManager;
 import android.os.Build;
 import android.os.Environment;
 import android.support.v4.app.Fragment;
@@ -30,6 +33,7 @@ import com.mitracking.db.DBHelper;
 import com.mitracking.dialogs.CustomDialog;
 import com.mitracking.dialogs.LoadDialog;
 import com.mitracking.dialogs.UpdateDialog;
+import com.mitracking.objs.BatteryObj;
 import com.mitracking.objs.LoginObj;
 import com.mitracking.utils.GpsConfiguration;
 import com.nostra13.universalimageloader.cache.disc.naming.Md5FileNameGenerator;
@@ -528,4 +532,39 @@ public class Singleton extends Application {
         return timer;
     }
 
+    public static BatteryObj getBatteryInfo() {
+        IntentFilter ifilter = new IntentFilter(Intent.ACTION_BATTERY_CHANGED);
+        Intent battery = context.registerReceiver(null, ifilter);
+
+        int status = battery.getIntExtra(BatteryManager.EXTRA_STATUS, -1);
+        String batteryStatus = "Desconocido";
+
+        switch (status) {
+            case BatteryManager.BATTERY_STATUS_UNKNOWN:
+                batteryStatus = "Desconocido";
+                break;
+            case  BatteryManager.BATTERY_STATUS_NOT_CHARGING:
+                batteryStatus = "No esta cargando";
+                break;
+            case BatteryManager.BATTERY_STATUS_CHARGING:
+                batteryStatus = "Cargando";
+                break;
+            case BatteryManager.BATTERY_STATUS_FULL:
+                batteryStatus = "Cargado completa";
+                break;
+        }
+
+        Log.d("getBatteryInfo()",batteryStatus);
+
+        int level = battery.getIntExtra(BatteryManager.EXTRA_LEVEL, -1);
+        int scale = battery.getIntExtra(BatteryManager.EXTRA_SCALE, -1);
+
+        float batteryPct = level / (float)scale;
+
+        Log.d("getBatteryInfo()","level: " + level + " scale: " + scale + " percent: " + batteryPct);
+        BatteryObj batteryObj = new BatteryObj();
+        batteryObj.status =  batteryStatus;
+        batteryObj.level = level;
+        return batteryObj;
+    }
 }
