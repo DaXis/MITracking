@@ -322,22 +322,12 @@ public class SendService extends Service implements LocationTracker, LocationTra
         }
     }
 
-    /*@Override
-    public void onGpsLocationInteraction(Location location) {
-        latitud = location.getLatitude();
-        longitud = location.getLongitude();
-        accuracy = location.getAccuracy();
-    }
-
-    public void initGPS(){
-        Singleton.initGPSConfig(this);
-    }*/
-
     private String dateFormat(long time) {
         String date = "";
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd kk:mm:ss");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("America/Mexico_City"));
         date = simpleDateFormat.format(new Date(time));
+        ;
         return date;
     }
 
@@ -346,6 +336,7 @@ public class SendService extends Service implements LocationTracker, LocationTra
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd kk:mm:ss");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         date = simpleDateFormat.format(new Date(time));
+        ;
         return date;
     }
 
@@ -362,7 +353,6 @@ public class SendService extends Service implements LocationTracker, LocationTra
         start();
         listener = update;
     }
-
 
     public void stop() {
         if (isRunning) {
@@ -400,28 +390,6 @@ public class SendService extends Service implements LocationTracker, LocationTra
     }
 
     public void onUpdate(Location oldLoc, long oldTime, Location newLoc, long newTime) {
-        /*boolean update = false;
-
-        if(lastLoc == null){
-            update = true;
-        }
-        else if(lastLoc != null && lastLoc.getProvider().equals(newLoc.getProvider())){
-            update = true;
-        }
-        else if(newLoc.getProvider().equals(LocationManager.GPS_PROVIDER)){
-            update = true;
-        }
-        else if (newTime - lastTime > 5 * 60 * 1000){
-            update = true;
-        }
-
-        if(update){
-            if(listener != null){
-                listener.onUpdate(lastLoc, lastTime, newLoc, newTime);
-            }
-            lastLoc = newLoc;
-            lastTime = newTime;
-        }*/
         lastLoc = newLoc;
         Log.d("lat lon", lastLoc.getLatitude() + ", " + lastLoc.getLongitude());
     }
@@ -534,4 +502,3 @@ public class SendService extends Service implements LocationTracker, LocationTra
     //*********************************
 
 }
-
