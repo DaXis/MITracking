@@ -3,11 +3,11 @@ package com.mitracking.db;
 import android.content.Context;
 import android.database.Cursor;
 import android.database.sqlite.SQLiteDatabase;
-import android.database.sqlite.SQLiteException;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.util.Log;
 
 import com.mitracking.Singleton;
+import com.mitracking.objs.BatteryObj;
 import com.mitracking.objs.TrackObj;
 import com.mitracking.utils.Constants;
 
@@ -19,7 +19,7 @@ public class DBHelper extends SQLiteOpenHelper {
 
     final String sqlCreate0 = "CREATE TABLE GeoItems (ID INTEGER PRIMARY KEY AUTOINCREMENT, MobileTrackDate TEXT, UTCTrackDate TEXT, " +
             "Latitude TEXT, Longitude TEXT, GpsAccuracy TEXT, GpsTrackStatus TEXT, GpsErrorCode TEXT, TrackGeoItemSend INTEGER, " +
-            "TrackGeoItemDate LONG)";
+            "TrackGeoItemDate LONG,BatteryPercent INTEGER,BatteryStatus TEXT)";
 
 
     public DBHelper(Context context, String name, SQLiteDatabase.CursorFactory factory, int version) {
@@ -40,9 +40,10 @@ public class DBHelper extends SQLiteOpenHelper {
     public void insertNewTrack(String MobileTrackDate, String UTCTrackDate, String Latitude, String Longitude, String GpsAccuracy,
                                long TrackGeoItemDate){
         if(!existRow(MobileTrackDate)){
-            String query = "INSERT INTO GeoItems (MobileTrackDate, UTCTrackDate, Latitude, Longitude, GpsAccuracy, TrackGeoItemDate) "+
+            BatteryObj batteryObj = Singleton.getBatteryInfo();
+            String query = "INSERT INTO GeoItems (MobileTrackDate, UTCTrackDate, Latitude, Longitude, GpsAccuracy, TrackGeoItemDate,BatteryPercent,BatteryStatus) "+
                     "VALUES ('"+MobileTrackDate+"', '"+UTCTrackDate+"', '"+Latitude+"', '"+Longitude+"', '"+GpsAccuracy+"', "+
-                    TrackGeoItemDate+")";
+                    TrackGeoItemDate+","+batteryObj.level+",'"+batteryObj.status+"')";
             //Log.d("insert query", query);
             Log.d("date --->", MobileTrackDate);
             Singleton.getDb().execSQL(query);
@@ -111,7 +112,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ArrayList<TrackObj> array = new ArrayList<>();
 
         String query = "SELECT ID, MobileTrackDate, UTCTrackDate, Latitude, Longitude, GpsAccuracy, GpsTrackStatus, GpsErrorCode, " +
-                "TrackGeoItemSend, TrackGeoItemDate FROM GeoItems WHERE TrackGeoItemSend = 0 AND GpsTrackStatus = '"+status
+                "TrackGeoItemSend, TrackGeoItemDate,BatteryPercent,BatteryStatus FROM GeoItems WHERE TrackGeoItemSend = 0 AND GpsTrackStatus = '"+status
                 +"' ORDER BY TrackGeoItemDate DESC";
 
         Cursor cursor = Singleton.getDb().rawQuery(query, null);
@@ -130,6 +131,8 @@ public class DBHelper extends SQLiteOpenHelper {
             trackObj.GpsErrorCode = cursor.getString(7);
             trackObj.TrackGeoItemSend = cursor.getInt(8);
             trackObj.TrackGeoItemDate = cursor.getLong(9);
+            trackObj.BatteryPercent = cursor.getInt(10);
+            trackObj.BatteryStatus = cursor.getString(11);
             array.add(trackObj);
             cursor.moveToNext();
         }
@@ -141,7 +144,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ArrayList<TrackObj> array = new ArrayList<>();
 
         String query = "SELECT ID, MobileTrackDate, UTCTrackDate, Latitude, Longitude, GpsAccuracy, GpsTrackStatus, GpsErrorCode, " +
-                "TrackGeoItemSend, TrackGeoItemDate FROM GeoItems WHERE GpsTrackStatus = 'FAIL' ORDER BY TrackGeoItemDate DESC";
+                "TrackGeoItemSend, TrackGeoItemDate,BatteryPercent,BatteryStatus FROM GeoItems WHERE GpsTrackStatus = 'FAIL' ORDER BY TrackGeoItemDate DESC";
 
         Cursor cursor = Singleton.getDb().rawQuery(query, null);
         if (cursor != null)
@@ -159,6 +162,8 @@ public class DBHelper extends SQLiteOpenHelper {
             trackObj.GpsErrorCode = cursor.getString(7);
             trackObj.TrackGeoItemSend = cursor.getInt(8);
             trackObj.TrackGeoItemDate = cursor.getLong(9);
+            trackObj.BatteryPercent = cursor.getInt(10);
+            trackObj.BatteryStatus = cursor.getString(11);
             array.add(trackObj);
             cursor.moveToNext();
         }
@@ -170,7 +175,7 @@ public class DBHelper extends SQLiteOpenHelper {
         ArrayList<TrackObj> array = new ArrayList<>();
 
         String query = "SELECT ID, MobileTrackDate, UTCTrackDate, Latitude, Longitude, GpsAccuracy, GpsTrackStatus, GpsErrorCode, " +
-                "TrackGeoItemSend, TrackGeoItemDate FROM GeoItems WHERE GpsTrackStatus = 'DONE' ORDER BY TrackGeoItemDate DESC";
+                "TrackGeoItemSend, TrackGeoItemDate,BatteryPercent,BatteryStatus FROM GeoItems WHERE GpsTrackStatus = 'DONE' ORDER BY TrackGeoItemDate DESC";
 
         Cursor cursor = Singleton.getDb().rawQuery(query, null);
         if (cursor != null)
@@ -188,6 +193,8 @@ public class DBHelper extends SQLiteOpenHelper {
             trackObj.GpsErrorCode = cursor.getString(7);
             trackObj.TrackGeoItemSend = cursor.getInt(8);
             trackObj.TrackGeoItemDate = cursor.getLong(9);
+            trackObj.BatteryPercent = cursor.getInt(10);
+            trackObj.BatteryStatus = cursor.getString(11);
             array.add(trackObj);
             cursor.moveToNext();
         }
