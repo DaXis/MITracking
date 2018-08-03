@@ -330,7 +330,6 @@ public class SendService extends Service implements LocationTracker, LocationTra
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd kk:mm:ss");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("America/Mexico_City"));
         date = simpleDateFormat.format(new Date(time));
-        ;
         return date;
     }
 
@@ -339,7 +338,6 @@ public class SendService extends Service implements LocationTracker, LocationTra
         SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyyMMdd kk:mm:ss");
         simpleDateFormat.setTimeZone(TimeZone.getTimeZone("UTC"));
         date = simpleDateFormat.format(new Date(time));
-        ;
         return date;
     }
 
