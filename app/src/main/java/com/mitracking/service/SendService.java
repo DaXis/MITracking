@@ -107,7 +107,6 @@ public class SendService extends Service {
     @Override
     public int onStartCommand(Intent intent, int flags, int startId) {
         Log.d("Service", "onStartCommand");
-        //return START_STICKY;
         return START_NOT_STICKY;
     }
 
