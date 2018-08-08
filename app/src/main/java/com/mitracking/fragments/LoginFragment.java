@@ -59,7 +59,7 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
         View rootView = inflater.inflate(R.layout.login, container, false);
 
         user = (EditText)rootView.findViewById(R.id.user);
-        //user.setText("user_1_test");
+        user.setText("alejandro.martinez@demo.com.mx");
 
         pass = (EditText)rootView.findViewById(R.id.pass);
         //pass.setText("p4ssw0rd");
@@ -159,10 +159,17 @@ public class LoginFragment extends Fragment implements View.OnClickListener {
 
     private String getDeviceId(){
         double size = getScreenSize();
-        if(size >= 7)
+        /*if(size >= 7)
             return "0003";
         else
-            return "0004";
+            return "0004";*/
+        if(size >= 7) {
+            Singleton.savePreferences("device_type", "android.tablet");
+            return "android.tablet";
+        }else {
+            Singleton.savePreferences("device_type", "android.phone");
+            return "android.phone";
+        }
     }
 
     private double getScreenSize(){

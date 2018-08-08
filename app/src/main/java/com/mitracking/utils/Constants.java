@@ -30,16 +30,15 @@ public class Constants {
     public static String PhoneSupport = Singleton.getSettings().getString(PhoneSupport_TAG, "TEL://5555555555555");
 
     public static String URL_ValidateUser = Singleton.getSettings().getString(URL_ValidateUser_TAG,
-//            "https://la-mi-salesdemo.cegedim.com/MITrackingWS/MITrackingWS.svc/ValidateUser");
             "https://la-mi-salesdemo.cegedim.com/PS3SGFR01/MI_TRK_SGFRD_WS.svc/ValidateUser");
+
     public static String URL_GetConfiguration = Singleton.getSettings().getString(URL_GetConfiguration_TAG,
-//            "https://la-mi-salesdemo.cegedim.com/MITrackingWS/MITrackingWS.svc/GetConfiguration");
             "https://la-mi-salesdemo.cegedim.com/PS3SGFR01/MI_TRK_SGFRD_WS.svc/GetConfiguration");
+
     public static String URL_TrackMobilePosition = Singleton.getSettings().getString(URL_TrackMobilePosition_TAG,
-//            "https://la-mi-salesdemo.cegedim.com/MITrackingWS/MITrackingWS.svc/TrackMobilePosition");
             "https://la-mi-salesdemo.cegedim.com/PS3SGFR01/MI_TRK_SGFRD_WS.svc/TrackMobilePosition");
+
     public static String URL_ErrorTrack = Singleton.getSettings().getString(URL_ErrorTrack_TAG,
-//            "https://la-mi-salesdemo.cegedim.com/MITrackingWS/MITrackingWS.svc/SendErrorLog");
             "https://la-mi-salesdemo.cegedim.com/PS3SGFR01/MI_TRK_SGFRD_WS.svc/SendErrorLog");
 
     //Constantes de login

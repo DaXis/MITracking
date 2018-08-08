@@ -1,5 +1,6 @@
 package com.mitracking.utils;
 
+import android.annotation.SuppressLint;
 import android.os.AsyncTask;
 import android.util.Log;
 
@@ -70,6 +71,7 @@ public class ConnectToServer {
             System.gc();
         }
 
+        @SuppressLint("LongLogTag")
         @Override
         protected String doInBackground(Object[]... params) {
             aux = params[0];
@@ -78,7 +80,7 @@ public class ConnectToServer {
             sUrl = Singleton.getBaseUrl()+sUrl;
 
             JSONObject json = (JSONObject)aux[3];
-            Log.d("ConnectToServer_URL --->", sUrl);
+            Log.d("CTS_URL --->", sUrl);
 
             HttpClient httpclient = getNewHttpClient();
 
@@ -120,9 +122,10 @@ public class ConnectToServer {
             Log.d("ANDRO_ASYNC", progress[0]);
         }
 
+        @SuppressLint("LongLogTag")
         @Override
         protected void onPostExecute(String result) {
-            Log.d("ConnectToServer_onPostExecute "+aux[0], " "+result);
+            Log.d("CTS_onPostExecute "+aux[0], " "+result);
 
             decideMethod((int)aux[1], aux[2], result);
 
@@ -169,223 +172,6 @@ public class ConnectToServer {
 
         return sb.toString();
     }
-
-    public ConnectToServer(Object[] args, boolean flag){
-        new UpAsync().executeOnExecutor(Singleton.getsExecutor(), args);
-    }
-
-    private class UpAsync extends AsyncTask<Object[], String, String> {
-
-        private Object[] aux;
-        private UpdateDialog updateDialog;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            statusCode = 0;
-            System.gc();
-        }
-
-        @Override
-        protected String doInBackground(Object[]... params) {
-            aux = params[0];
-            String sUrl = (String)aux[0], result = "";
-
-            sUrl = Singleton.getFileBaseUrl();
-
-            JSONArray json = (JSONArray)aux[3];
-            Log.d("ConnectToServer_URL --->", sUrl);
-            Log.d("json sended", json.toString());
-            File[] files = (File[])aux[4];
-
-            updateDialog = (UpdateDialog)aux[5];
-            ConnectToServer.updateDialog = updateDialog;
-
-            HttpClient httpclient = getNewHttpClient();
-
-            HttpPost httppost = new HttpPost(sUrl);
-
-            String BOUNDARY= "--eriksboundry--";
-
-            httppost.setHeader("Content-Type", "multipart/form-data; boundary="+BOUNDARY);
-            MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE,BOUNDARY,
-                    Charset.forName(HTTP.UTF_8));
-            try {
-                try {
-                    for(int i = 0; i < json.length(); i++){
-                        JSONObject jsonObject = json.getJSONObject(i);
-                        Log.d(jsonObject.getString("id"), jsonObject.getString("value"));
-                        entity.addPart(jsonObject.getString("id"), new StringBody(jsonObject.getString("value"),
-                                Charset.forName(HTTP.UTF_8)));
-                    }
-
-                    for(int i = 0; i < files.length; i++){
-                        if(files[i] != null) {
-                            Log.d("file path "+i, files[i].getAbsolutePath());
-                            if(!files[i].getName().endsWith(".zip"))
-                                entity.addPart("",new FileBody(files[i], "image/jpeg"));
-                            else
-                                entity.addPart("",new FileBody(files[i]));
-                        }
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                    if(updateDialog != null)
-                        updateDialog.dismiss();
-                    Singleton.dissmissLoad();
-                    Singleton.showCustomDialog(Singleton.getFragmentManager(),
-                            "Atención", "Hubo un problema con tu conexión, intentalo de nuevo más tarde", "Continuar", 0);
-                }
-            } catch (UnsupportedEncodingException e) {
-                Log.v("encoding exception","E::: "+e);
-                if(updateDialog != null)
-                    updateDialog.dismiss();
-                Singleton.dissmissLoad();
-                Singleton.showCustomDialog(Singleton.getFragmentManager(),
-                        "Atención", "Hubo un problema con tu conexión, intentalo de nuevo más tarde", "Continuar", 0);
-                e.printStackTrace();
-            }
-            httppost.setHeader("Accept", "application/json");
-            //httppost.setEntity(entity);
-
-            ProgressHttpEntityWrapper.ProgressCallback progressCallback = new ProgressHttpEntityWrapper.ProgressCallback() {
-                @Override
-                public void progress(float progress) {
-                    publishProgress(""+progress);
-                }
-            };
-            httppost.setEntity(new ProgressHttpEntityWrapper(entity, progressCallback));
-
-            try {
-                org.apache.http.HttpResponse response = httpclient.execute(httppost);
-                //result = ""+response.getStatusLine().getStatusCode();
-                statusCode = response.getStatusLine().getStatusCode();
-                Log.d("StatusCode", ""+statusCode);
-                result = getResponse(response);
-                Log.d("resultado put", result);
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-                updateDialog.dismiss();
-                Singleton.showCustomDialog(Singleton.getFragmentManager(),
-                        "Atención", "Hubo un problema con tu conexión, intentalo de nuevo más tarde", "Continuar", 0);
-            } catch (IOException e) {
-                e.printStackTrace();
-                updateDialog.dismiss();
-                Singleton.showCustomDialog(Singleton.getFragmentManager(),
-                        "Atención", "Hubo un problema con tu conexión, intentalo de nuevo más tarde", "Continuar", 0);
-            }
-
-            return result;
-        }
-
-        protected void onProgressUpdate(String... progress) {
-            //Log.d("ANDRO_ASYNC", progress[0]);
-            float aux0 = Float.parseFloat(progress[0]);
-            int aux1 = (int)aux0;
-            updateDialog.updateData(aux1, "Progreso de envío al "+aux1+"%");
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Log.d("ConnectToServer_onPostExecute "+aux[0], " "+result);
-            if(statusCode == 500){
-                updateDialog.dismiss();
-                Singleton.showCustomDialog(Singleton.getFragmentManager(),
-                        "Atención", "Hubo un problema con tu conexión, intentalo de nuevo más tarde", "Continuar", 0);
-            } else
-                decideMethod((int)aux[1], aux[2], result);
-
-            System.gc();
-        }
-    }
-
-    /*public ConnectToServer(Object[] args, boolean arg0, String arg1){
-        new UpAsyncPut().executeOnExecutor(Singleton.getsExecutor(), args);
-    }*/
-
-    /*private class UpAsyncPut extends AsyncTask<Object[], String, String> {
-
-        private Object[] aux;
-
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-            System.gc();
-        }
-
-        @Override
-        protected String doInBackground(Object[]... params) {
-            aux = params[0];
-            String sUrl = (String)aux[0], result = "";
-
-            sUrl = Singleton.getFileBaseUrl();
-
-            JSONArray json = (JSONArray)aux[3];
-            Log.d("ConnectToServer_URL --->", sUrl);
-            //ReactiveObj[] files = (ReactiveObj[])aux[4];
-
-            HttpClient httpclient = getNewHttpClient();
-
-            HttpPut httppost = new HttpPut(sUrl);
-
-            String BOUNDARY= "--eriksboundry--";
-
-            httppost.setHeader("Content-Type", "multipart/form-data; boundary="+BOUNDARY);
-            MultipartEntity entity = new MultipartEntity(HttpMultipartMode.BROWSER_COMPATIBLE,BOUNDARY,
-                    Charset.forName(HTTP.UTF_8));
-            try {
-                try {
-                    for(int i = 0; i < json.length(); i++){
-                        JSONObject jsonObject = json.getJSONObject(i);
-                        Log.d(jsonObject.getString("id"), jsonObject.getString("value"));
-                        entity.addPart(jsonObject.getString("id"), new StringBody(jsonObject.getString("value"),
-                                Charset.forName(HTTP.UTF_8)));
-                    }
-
-                    for(int i = 0; i < files.length; i++){
-                        if(files[i] != null) {
-                            Log.d("file path "+files[i].mid, files[i].file.getAbsolutePath());
-                            entity.addPart(files[i].mid, new FileBody(files[i].file));
-                        }
-                    }
-
-                } catch (JSONException e) {
-                    e.printStackTrace();
-                }
-            } catch (UnsupportedEncodingException e) {
-                Log.v("encoding exception","E::: "+e);
-                e.printStackTrace();
-            }
-            httppost.setHeader("Accept", "application/json");
-            httppost.setEntity(entity);
-
-            try {
-                org.apache.http.HttpResponse response = httpclient.execute(httppost);
-                result = ""+response.getStatusLine().getStatusCode();
-                Log.d("resultado put", "----- "+getResponse(response));
-            } catch (ClientProtocolException e) {
-                e.printStackTrace();
-            } catch (IOException e) {
-                e.printStackTrace();
-            }
-
-            return result;
-        }
-
-        protected void onProgressUpdate(String... progress) {
-            Log.d("ANDRO_ASYNC", progress[0]);
-        }
-
-        @Override
-        protected void onPostExecute(String result) {
-            Log.d("ConnectToServer_onPostExecute "+aux[0], " "+result);
-
-            decideMethod((int)aux[1], aux[2], result);
-
-            System.gc();
-        }
-    }*/
 
     private HttpParams setTimeOut(){
         HttpParams httpParameters = new BasicHttpParams();

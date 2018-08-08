@@ -14,14 +14,8 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
-
-import android.content.IntentFilter;
-import android.graphics.Color;
 import android.location.Location;
-import android.os.BatteryManager;
-import android.os.Build;
 import android.os.IBinder;
-import android.support.annotation.RequiresApi;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -29,7 +23,6 @@ import com.mitracking.MainActivity;
 import com.mitracking.R;
 import com.mitracking.Singleton;
 import com.mitracking.interfaces.LocationTracker;
-import com.mitracking.objs.BatteryObj;
 import com.mitracking.objs.LoginObj;
 import com.mitracking.objs.TrackObj;
 import com.mitracking.utils.ConnectToServer;
@@ -41,8 +34,6 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
@@ -262,7 +253,8 @@ public class SendService extends Service implements LocationTracker, LocationTra
             json.put("SessionID", Singleton.getLoginObj().SessionID);
             json.put("AlignmentID", Singleton.getLoginObj().AlignmentID);
             json.put("EmployeeID", Singleton.getLoginObj().EmployeeID);
-            json.put("MobileID", Singleton.getSettings().getString(Constants.MobileID_TAG, ""));
+            //json.put("MobileID", Singleton.getSettings().getString(Constants.MobileID_TAG, ""));
+            json.put("MobileID", Singleton.getSettings().getString("device_type", ""));
 
             JSONArray TrackGeoItems = new JSONArray();
             array = Singleton.getBdh().getTrackList("DONE");
@@ -416,8 +408,13 @@ public class SendService extends Service implements LocationTracker, LocationTra
         if (Singleton.getSettings().getString(Constants.RefreshConfig_TAG, "").equals("TRUE")) {
             int hour, minute;
             String[] aux = Constants.ReadConfigurationAt.split("[:]");
-            hour = Integer.parseInt(aux[0]);
-            minute = Integer.parseInt(aux[1]);
+            if(aux.length > 1){
+                hour = Integer.parseInt(aux[0]);
+                minute = Integer.parseInt(aux[1]);
+            } else {
+                hour = Integer.parseInt(aux[0]);
+                minute = 0;
+            }
 
             alarmMgr = (AlarmManager) getSystemService(Context.ALARM_SERVICE);
             Intent intent = new Intent(this, AlarmReceiver.class);
@@ -500,5 +497,4 @@ public class SendService extends Service implements LocationTracker, LocationTra
         array.clear();
     }
     //*********************************
-
 }
