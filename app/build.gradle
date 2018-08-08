@@ -37,5 +37,5 @@ dependencies {
     implementation files('libs/apache-httpcore.jar')
     implementation files('libs/httpclient-4.2.5.jar')
     implementation files('libs/nineoldandroids-library-2.4.0.jar')
-    //compile project(':pulllist')
+    implementation 'com.google.android.gms:play-services-location:15.0.1'
 }

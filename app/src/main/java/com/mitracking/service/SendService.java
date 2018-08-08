@@ -14,15 +14,31 @@ import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Calendar;
+
+import android.content.pm.PackageManager;
 import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
+import android.os.Bundle;
 import android.os.IBinder;
+import android.os.Looper;
+import android.support.annotation.NonNull;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.google.android.gms.location.FusedLocationProviderClient;
+import com.google.android.gms.location.LocationCallback;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationResult;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.SettingsClient;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.mitracking.MainActivity;
 import com.mitracking.R;
 import com.mitracking.Singleton;
-import com.mitracking.interfaces.LocationTracker;
 import com.mitracking.objs.LoginObj;
 import com.mitracking.objs.TrackObj;
 import com.mitracking.utils.ConnectToServer;
@@ -34,27 +50,35 @@ import org.json.JSONException;
 import org.json.JSONObject;
 
 import java.util.Date;
+import java.util.Locale;
 import java.util.TimeZone;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.TimeUnit;
 
-public class SendService extends Service implements LocationTracker, LocationTracker.LocationUpdateListener {
+import static com.google.android.gms.common.util.WorkSourceUtil.TAG;
+
+public class SendService extends Service {
 
     private static Timer timer;
-    private static long TIME, INITIAL_DELAY = 5500;
+    private static long TIME, INITIAL_DELAY = 5500, demo;
     private static double latitud, longitud;
     private static float accuracy;
     private ArrayList<TrackObj> array;
     private ArrayList<TrackObj> array_b;
-    //********************************
-    private boolean isRunning;
-    private ProviderLocationTracker gps;
-    private ProviderLocationTracker net;
-    private LocationUpdateListener listener;
-    private static Location lastLoc;
-    //********************************
     private AlarmManager alarmMgr;
+    private Location lastLoc;
+
+    //*****************
+    FusedLocationProviderClient mFusedLocationClient;
+
+    LocationRequest mLocationRequest;
+    LocationSettingsRequest.Builder builder;
+    LocationSettingsRequest locationSettingsRequest;
+    SettingsClient settingsClient;
+    //*****************
 
     @Override
     public void onCreate() {
@@ -62,22 +86,22 @@ public class SendService extends Service implements LocationTracker, LocationTra
         Singleton.getInstance();
         int secons = Integer.parseInt(Singleton.getSettings().getString(Constants.TrackModeValue_TAG, ""));
         TIME = TimeUnit.SECONDS.toMillis(secons);
-        //initGPS();
-        //Log.d("GPS config", ""+Singleton.getGpsConfig().configuracionLocationManager());
+        demo = TimeUnit.MINUTES.toMillis(1);
+        mFusedLocationClient = LocationServices.getFusedLocationProviderClient(this);
+
         refreshConfig();
-        gps = new ProviderLocationTracker(this, ProviderLocationTracker.ProviderType.GPS);
-        net = new ProviderLocationTracker(this, ProviderLocationTracker.ProviderType.NETWORK);
-        start();
         startOnBack();
-        if (timer == null) {
-            timer = new Timer();
-            timer.scheduleAtFixedRate(new TimerTask() {
-                synchronized public void run() {
-                    System.gc();
-                    trackingFunction();
-                }
-            }, INITIAL_DELAY, TIME);
-        }
+        //initLocationManager();
+        //demo2();
+        //demo3();
+
+        Runnable runnable = new Runnable() {
+            public void run() {
+                demo2();
+            }
+        };
+        ScheduledExecutorService service = Executors.newSingleThreadScheduledExecutor();
+        service.scheduleAtFixedRate(runnable, INITIAL_DELAY, TIME, TimeUnit.MILLISECONDS);
     }
 
     @Override
@@ -332,60 +356,6 @@ public class SendService extends Service implements LocationTracker, LocationTra
         return date;
     }
 
-    public void start() {
-        if (isRunning) {
-            return;
-        }
-        gps.start(this);
-        net.start(this);
-        isRunning = true;
-    }
-
-    public void start(LocationUpdateListener update) {
-        start();
-        listener = update;
-    }
-
-    public void stop() {
-        if (isRunning) {
-            gps.stop();
-            net.stop();
-            isRunning = false;
-            listener = null;
-        }
-    }
-
-    public boolean hasLocation() {
-        //If either has a location, use it
-        return gps.hasLocation() || net.hasLocation();
-    }
-
-    public boolean hasPossiblyStaleLocation() {
-        //If either has a location, use it
-        return gps.hasPossiblyStaleLocation() || net.hasPossiblyStaleLocation();
-    }
-
-    public Location getLocation() {
-        Location ret = gps.getLocation();
-        if (ret == null) {
-            ret = net.getLocation();
-        }
-        return ret;
-    }
-
-    public Location getPossiblyStaleLocation() {
-        Location ret = gps.getPossiblyStaleLocation();
-        if (ret == null) {
-            ret = net.getPossiblyStaleLocation();
-        }
-        return ret;
-    }
-
-    public void onUpdate(Location oldLoc, long oldTime, Location newLoc, long newTime) {
-        lastLoc = newLoc;
-        Log.d("lat lon", lastLoc.getLatitude() + ", " + lastLoc.getLongitude());
-    }
-
     public void getResponse(String result) {
         Log.d("gps response", result);
         try {
@@ -408,7 +378,7 @@ public class SendService extends Service implements LocationTracker, LocationTra
         if (Singleton.getSettings().getString(Constants.RefreshConfig_TAG, "").equals("TRUE")) {
             int hour, minute;
             String[] aux = Constants.ReadConfigurationAt.split("[:]");
-            if(aux.length > 1){
+            if (aux.length > 1) {
                 hour = Integer.parseInt(aux[0]);
                 minute = Integer.parseInt(aux[1]);
             } else {
@@ -496,5 +466,83 @@ public class SendService extends Service implements LocationTracker, LocationTra
         }
         array.clear();
     }
+
     //*********************************
+    private void initLocationManager() {
+        LocationManager locationManager = (LocationManager) this.getSystemService(Context.LOCATION_SERVICE);
+
+        LocationListener locationListener = new LocationListener() {
+            public void onLocationChanged(Location location) {
+                //Log.d(String.valueOf(location.getLatitude()), String.valueOf(location.getLongitude()));
+                System.gc();
+                lastLoc = location;
+                trackingFunction();
+            }
+
+            public void onStatusChanged(String provider, int status, Bundle extras) {
+            }
+
+            public void onProviderEnabled(String provider) {
+            }
+
+            public void onProviderDisabled(String provider) {
+            }
+        };
+
+        // Register the listener with the Location Manager to receive location updates
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        locationManager.requestLocationUpdates(LocationManager.GPS_PROVIDER, TIME, 0, locationListener);
+    }
+
+    private void demo2(){
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED
+                && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mFusedLocationClient.getLastLocation().addOnCompleteListener(Singleton.getCurrentActivity(), new OnCompleteListener<Location>() {
+            @Override
+            public void onComplete(@NonNull Task<Location> task) {
+                if (task.isSuccessful() && task.getResult() != null) {
+                    lastLoc = task.getResult();
+                    Log.d(String.valueOf(lastLoc.getLatitude()), String.valueOf(lastLoc.getLongitude()));
+                    trackingFunction();
+                } else {
+                    Log.w(TAG, "getLastLocation:exception", task.getException());
+                }
+            }
+        });
+    }
+
+    private void demo3(){
+        mLocationRequest = new LocationRequest();
+        mLocationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        mLocationRequest.setInterval(TIME);
+        //mLocationRequest.setFastestInterval(FASTEST_INTERVAL);
+
+        builder = new LocationSettingsRequest.Builder();
+        builder.addLocationRequest(mLocationRequest);
+        locationSettingsRequest = builder.build();
+
+        settingsClient = LocationServices.getSettingsClient(this);
+        settingsClient.checkLocationSettings(locationSettingsRequest);
+
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) !=
+                        PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
+        mFusedLocationClient.requestLocationUpdates(mLocationRequest, new LocationCallback() {
+                    @Override
+                    public void onLocationResult(LocationResult locationResult) {
+                        lastLoc = locationResult.getLastLocation();
+                        //Log.d(String.valueOf(lastLoc.getLatitude()), String.valueOf(lastLoc.getLongitude()));
+                        //trackingFunction();
+                    }
+                }, Looper.myLooper());
+    }
 }
